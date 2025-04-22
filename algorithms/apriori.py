@@ -16,8 +16,8 @@ def apriori(dataset, minimum_support):
 
 def apriori_close(dataset, minimum_support):
     all_frequent_itemsets = apriori(dataset, minimum_support)
-    closed_itemsets = find_closed_itemsets(all_frequent_itemsets)
-    return closed_itemsets
+    all_closed_itemsets = find_closed_itemsets(all_frequent_itemsets)
+    return all_closed_itemsets
 
 
 def create_supersets(prev_itemsets, itemset_size):
