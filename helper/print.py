@@ -31,12 +31,6 @@ def print_sorted_itemsets(itemsets):
         print(f"{sorted(itemset)} : {support}")
 
 
-def print_dataset(dataset):
-    for row_idx, transaction in enumerate(dataset, 1):
-        items = ", ".join(sorted(transaction))
-        print(f"{row_idx:>2}: [{items}]")
-
-
 def print_dataset(dataset):      
     columns = sorted({item for txn in dataset for item in txn})
     rows = len(dataset)

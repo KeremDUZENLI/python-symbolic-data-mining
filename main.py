@@ -12,10 +12,10 @@ def run_algorithm(dataset, minimum_support, algorithm):
     if algorithm == "eclat":
         return eclat(dataset, minimum_support)
 
-rows = 10
-columns = 10
-density = 0.4
-minimum_support = 4
+rows = 5
+columns = 5
+density = 0.6
+minimum_support = 3
 algorithm = "apriori_close"  # Options: "apriori", "apriori_close", "eclat"
 
 dataset = generate_dataset(rows, columns, density)
