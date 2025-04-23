@@ -1,15 +1,25 @@
+from algorithms.apriori import apriori, apriori_close
+from algorithms.eclat   import eclat
 from helper.dataset     import generate_dataset
 from helper.print       import print_summary, prompt
-from helper.selector    import run_algorithm
 
 
 ALGORITHMS = {1: "apriori", 2: "apriori_close", 3: "eclat"}
+
+def run_algorithm(dataset, minimum_support, algorithm):
+    if algorithm == "apriori":
+        return apriori(dataset, minimum_support)
+    if algorithm == "apriori_close":
+        return apriori_close(dataset, minimum_support)
+    if algorithm == "eclat":
+        return eclat(dataset, minimum_support)
+    raise ValueError(f"Unknown algorithm: {algorithm}")
 
 
 rows = prompt("Number of Rows", maximum=10)
 columns = prompt("Number of Columns", maximum=10)
 density = prompt("Density", maximum=100) /100
-minimum_support = prompt("Minimum Support", maximum=int(rows*columns*density)+1)
+minimum_support = prompt("Minimum Support", maximum=max(rows, columns))
 algorithm_choice = prompt(f"Select algorithm {ALGORITHMS}", minimum=1, maximum=3)
 dataset, labels = generate_dataset(rows, columns, density)
 frequent_itemsets = run_algorithm(dataset, minimum_support, ALGORITHMS[algorithm_choice])

@@ -13,9 +13,9 @@ def generate_dataset(rows, columns, density):
 
     labels = [col_label(i) for i in range(columns)]
 
-    total = rows * columns
-    ones = int(total * density)
-    flat = [1]*ones + [0]*(total - ones)
+    total_cells = rows * columns
+    occurencies = int(total_cells * density)
+    flat = [1]*occurencies + [0]*(total_cells - occurencies)
     random.shuffle(flat)
 
     transactions = []
