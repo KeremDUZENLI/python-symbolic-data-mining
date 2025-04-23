@@ -1,4 +1,4 @@
-def print_summary(dataset, frequent_itemsets, minimum_support, algorithm):
+def print_summary(dataset, labels, frequent_itemsets, minimum_support, algorithm):
     number_rows = len(dataset)
     columns = set()
     for transaction in dataset:
@@ -19,10 +19,23 @@ def print_summary(dataset, frequent_itemsets, minimum_support, algorithm):
     print(f"{'FCIs' if algorithm == 'apriori_close' else 'FIs':24}: {len(frequent_itemsets)}")
 
     print("\n===== DATASET =====")
-    print_dataset(dataset)
+    print_dataset(dataset, labels)
     
     print("\n===== ITEMSET =====")
     print_sorted_itemsets(frequent_itemsets)
+
+
+def print_dataset(dataset, labels):      
+    rows = len(dataset)
+    pad = len(str(rows))
+    sep = " | "
+
+    header = " " * (pad + 1) + sep.join(labels)
+    print(header)
+      
+    for idx, txn in enumerate(dataset, start=1):
+        cells = ["X" if col in txn else " " for col in labels]
+        print(f"{idx:>{pad}} " + sep.join(cells))
 
 
 def print_sorted_itemsets(itemsets):
@@ -31,16 +44,11 @@ def print_sorted_itemsets(itemsets):
         print(f"{sorted(itemset)} : {support}")
 
 
-def print_dataset(dataset):      
-    columns = sorted({item for txn in dataset for item in txn})
-    rows = len(dataset)
-    pad = len(str(rows))
-    sep = " | "
-
-    header = " " * (pad + 1) + sep.join(columns)
-    print(header)
-
-    for idx, txn in enumerate(dataset, start=1):
-        cells = ["X" if col in txn else " " for col in columns]
-        line = f"{idx:>{pad}} " + sep.join(cells)
-        print(line)
+def prompt(message, minimum=1, maximum=None):
+    range = f"({minimum} - {maximum})"  
+    while True:
+        value = int(input(f"{message} {range}: ").strip())
+        if (minimum is not None and value < minimum) or (maximum is not None and value > maximum):
+            print(f"❌ Valid Range = {range}")
+        else:
+            return value

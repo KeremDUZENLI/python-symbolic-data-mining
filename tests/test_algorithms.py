@@ -1,6 +1,6 @@
-import unittest
 from algorithms.apriori import apriori, apriori_close
 from algorithms.eclat   import eclat
+import unittest
 
 
 class TestFrequentItemsetAlgorithms(unittest.TestCase):

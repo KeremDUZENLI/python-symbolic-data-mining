@@ -1,5 +1,6 @@
 import random
 
+
 def generate_dataset(rows, columns, density):
     def col_label(i):
         label = ""
@@ -24,4 +25,4 @@ def generate_dataset(rows, columns, density):
         txn = [labels[c] for c, bit in enumerate(row_bits) if bit]
         transactions.append(txn)
 
-    return transactions
+    return transactions, labels

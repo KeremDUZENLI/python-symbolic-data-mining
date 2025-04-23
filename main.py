@@ -1,23 +1,17 @@
-from algorithms.apriori import apriori, apriori_close
-from algorithms.eclat import eclat
-from helper.print import print_summary
-from helper.dataset import generate_dataset
+from helper.dataset     import generate_dataset
+from helper.print       import print_summary, prompt
+from helper.selector    import run_algorithm
 
 
-def run_algorithm(dataset, minimum_support, algorithm):
-    if algorithm == "apriori":
-        return apriori(dataset, minimum_support)
-    if algorithm == "apriori_close":
-        return apriori_close(dataset, minimum_support)
-    if algorithm == "eclat":
-        return eclat(dataset, minimum_support)
+ALGORITHMS = {1: "apriori", 2: "apriori_close", 3: "eclat"}
 
-rows = 5
-columns = 5
-density = 0.6
-minimum_support = 3
-algorithm = "apriori_close"  # Options: "apriori", "apriori_close", "eclat"
 
-dataset = generate_dataset(rows, columns, density)
-frequent_itemsets = run_algorithm(dataset, minimum_support, algorithm)
-print_summary(dataset, frequent_itemsets, minimum_support, algorithm)
+rows = prompt("Number of Rows", maximum=10)
+columns = prompt("Number of Columns", maximum=10)
+density = prompt("Density", maximum=100) /100
+minimum_support = prompt("Minimum Support", maximum=int(rows*columns*density)+1)
+algorithm_choice = prompt(f"Select algorithm {ALGORITHMS}", minimum=1, maximum=3)
+dataset, labels = generate_dataset(rows, columns, density)
+frequent_itemsets = run_algorithm(dataset, minimum_support, ALGORITHMS[algorithm_choice])
+
+print_summary(dataset, labels, frequent_itemsets, minimum_support, ALGORITHMS[algorithm_choice])
