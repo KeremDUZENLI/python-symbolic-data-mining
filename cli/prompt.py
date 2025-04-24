@@ -4,9 +4,9 @@ class PROMPT():
         self.run_algorithm = run_algorithm
         self.output_summary = output_summary
         
-        self._run_prompt()
+        self._build_prompt()
     
-    def _run_prompt(self):
+    def _build_prompt(self):
         rows = self._prompt("Number of Rows", maximum=10)
         columns = self._prompt("Number of Columns", maximum=10)
         density = self._prompt("Density", maximum=100)
