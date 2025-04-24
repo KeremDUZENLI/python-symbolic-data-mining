@@ -42,13 +42,13 @@ class TestFrequentItemsetAlgorithms(unittest.TestCase):
         all_frequent_itemsets = apriori(self.dataset, self.minimum_support)
         self.assertDictEqual(all_frequent_itemsets, self.expected_frequent_itemsets)
 
-    def test_eclat(self):
-        all_frequent_itemsets = eclat(self.dataset, self.minimum_support)
-        self.assertDictEqual(all_frequent_itemsets, self.expected_frequent_itemsets)
-
     def test_apriori_closed(self):
         all_closed_itemsets = apriori_close(self.dataset, self.minimum_support)
         self.assertDictEqual(all_closed_itemsets, self.expected_closed_itemsets)
+        
+    def test_eclat(self):
+        all_frequent_itemsets = eclat(self.dataset, self.minimum_support)
+        self.assertDictEqual(all_frequent_itemsets, self.expected_frequent_itemsets)
 
 
 if __name__ == "__main__":

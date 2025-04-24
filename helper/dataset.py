@@ -14,15 +14,15 @@ def generate_dataset(rows, columns, density):
     labels = [col_label(i) for i in range(columns)]
 
     total_cells = rows * columns
-    occurencies = int(total_cells * density)
+    occurencies = int(total_cells * (density / 100))
     flat = [1]*occurencies + [0]*(total_cells - occurencies)
     random.shuffle(flat)
 
-    transactions = []
+    dataset = []
     for r in range(rows):
         start = r * columns
         row_bits = flat[start : start + columns]
         txn = [labels[c] for c, bit in enumerate(row_bits) if bit]
-        transactions.append(txn)
+        dataset.append(txn)
 
-    return transactions, labels
+    return dataset, labels

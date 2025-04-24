@@ -1,10 +1,15 @@
 from algorithms.apriori import apriori, apriori_close
 from algorithms.eclat   import eclat
+
+from cli.prompt         import PROMPT
+from gui.window         import GUI
+
 from helper.dataset     import generate_dataset
-from helper.print       import print_summary, prompt
+from helper.output      import output_summary
 
 
 ALGORITHMS = {1: "apriori", 2: "apriori_close", 3: "eclat"}
+
 
 def run_algorithm(dataset, minimum_support, algorithm):
     if algorithm == "apriori":
@@ -16,17 +21,8 @@ def run_algorithm(dataset, minimum_support, algorithm):
     raise ValueError(f"Unknown algorithm: {algorithm}")
 
 
-def run_prompt():
-    rows = prompt("Number of Rows", maximum=10)
-    columns = prompt("Number of Columns", maximum=10)
-    density = prompt("Density", maximum=100) /100
-    dataset, labels = generate_dataset(rows, columns, density)
-    
-    minimum_support = prompt("Minimum Support", maximum=max(rows, columns))
-    algorithm_choice = prompt(f"Select algorithm {ALGORITHMS}", minimum=1, maximum=3)
-    frequent_itemsets = run_algorithm(dataset, minimum_support, ALGORITHMS[algorithm_choice])
-    
-    return dataset, labels, minimum_support, ALGORITHMS[algorithm_choice], frequent_itemsets
 
+# PROMPT(generate_dataset, run_algorithm, output_summary, ALGORITHMS)
 
-print_summary(*run_prompt())
+GUI(generate_dataset, run_algorithm, output_summary, ALGORITHMS)
+
