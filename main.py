@@ -16,12 +16,17 @@ def run_algorithm(dataset, minimum_support, algorithm):
     raise ValueError(f"Unknown algorithm: {algorithm}")
 
 
-rows = prompt("Number of Rows", maximum=10)
-columns = prompt("Number of Columns", maximum=10)
-density = prompt("Density", maximum=100) /100
-minimum_support = prompt("Minimum Support", maximum=max(rows, columns))
-algorithm_choice = prompt(f"Select algorithm {ALGORITHMS}", minimum=1, maximum=3)
-dataset, labels = generate_dataset(rows, columns, density)
-frequent_itemsets = run_algorithm(dataset, minimum_support, ALGORITHMS[algorithm_choice])
+def run_prompt():
+    rows = prompt("Number of Rows", maximum=10)
+    columns = prompt("Number of Columns", maximum=10)
+    density = prompt("Density", maximum=100) /100
+    dataset, labels = generate_dataset(rows, columns, density)
+    
+    minimum_support = prompt("Minimum Support", maximum=max(rows, columns))
+    algorithm_choice = prompt(f"Select algorithm {ALGORITHMS}", minimum=1, maximum=3)
+    frequent_itemsets = run_algorithm(dataset, minimum_support, ALGORITHMS[algorithm_choice])
+    
+    return dataset, labels, minimum_support, ALGORITHMS[algorithm_choice], frequent_itemsets
 
-print_summary(dataset, labels, frequent_itemsets, minimum_support, ALGORITHMS[algorithm_choice])
+
+print_summary(*run_prompt())

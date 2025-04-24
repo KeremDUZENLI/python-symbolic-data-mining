@@ -1,4 +1,4 @@
-def print_summary(dataset, labels, frequent_itemsets, minimum_support, algorithm):
+def print_summary(dataset, labels, minimum_support, algorithm_choice, frequent_itemsets):
     number_rows = len(dataset)
     columns = set()
     for transaction in dataset:
@@ -15,8 +15,8 @@ def print_summary(dataset, labels, frequent_itemsets, minimum_support, algorithm
     print(f"Total number of columns : {number_columns}")
     print(f"Density                 : {density:.2%}")
     print(f"Minimum support         : {minimum_support}")
-    print(f"Chosen algorithm        : {algorithm}")
-    print(f"{'FCIs' if algorithm == 'apriori_close' else 'FIs':24}: {len(frequent_itemsets)}")
+    print(f"Chosen algorithm        : {algorithm_choice}")
+    print(f"{'FCIs' if algorithm_choice == 'apriori_close' else 'FIs':24}: {len(frequent_itemsets)}")
 
     print("\n===== DATASET =====")
     print_dataset(dataset, labels)
