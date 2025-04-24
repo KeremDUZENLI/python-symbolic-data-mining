@@ -1,26 +1,23 @@
 class PROMPT():
-    def __init__(self, generate_dataset, run_algorithm, output_summary, algorithms):
+    def __init__(self, generate_dataset, run_algorithm, output_summary):
         self.generate_dataset = generate_dataset
         self.run_algorithm = run_algorithm
         self.output_summary = output_summary
         
-        self.algorithms = algorithms
-        
-        self._run_prompt()
+        self._build_prompt()
     
-    def _run_prompt(self):
+    def _build_prompt(self):
         rows = self._prompt("Number of Rows", maximum=10)
         columns = self._prompt("Number of Columns", maximum=10)
         density = self._prompt("Density", maximum=100)
         dataset, labels = self.generate_dataset(rows, columns, density)
 
         minimum_support = self._prompt("Minimum Support", maximum=rows)
-        algorithm_choice = self._prompt(f"Select algorithm {self.algorithms}", minimum=1, maximum=3)
-        frequent_itemsets = self.run_algorithm(dataset, minimum_support, self.algorithms[algorithm_choice])
+        algorithm_choice = self._prompt("1)Apriori  |  2)Apriori-Close  |  3)Eclat", maximum=3)
+        frequent_itemsets = self.run_algorithm(dataset, minimum_support, algorithm_choice)
         
         lines = self.output_summary(dataset, labels, minimum_support, algorithm_choice, frequent_itemsets)
         print(*lines, sep='\n')
-
 
     def _prompt(self, message, minimum=1, maximum=None):
         range = f"({minimum} - {maximum})"  
