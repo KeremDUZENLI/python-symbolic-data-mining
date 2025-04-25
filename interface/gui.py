@@ -19,9 +19,9 @@ class GUI(tkinter.Tk):
     def _generate_dataset(self):
         self.output.delete('1.0', tkinter.END)
         
-        rows = self.rows.get()
-        columns = self.columns.get()
-        density = self.density.get()
+        rows = self._input_value(self.rows, minimum=1, maximum=10)
+        columns = self._input_value(self.columns, minimum=1, maximum=10)
+        density = self._input_value(self.density, minimum=1, maximum=100)
         self.dataset, self.labels = self.create_dataset(rows, columns, density)
         
         lines = self.output_dataset(self.dataset, self.labels)
@@ -29,14 +29,25 @@ class GUI(tkinter.Tk):
 
         
     def _generate_result(self):
-        minimum_support = self.minimum_support.get()
-        algorithm_choice = self.algorithm_choice.get()
+        minimum_support = self._input_value(self.minimum_support, 1, 10)
+        algorithm_choice = self._input_value(self.algorithm_choice ,1, 3)
         frequent_itemsets = self.run_algorithm(self.dataset, minimum_support, algorithm_choice)
         
         lines = self.output_summary(self.dataset, self.labels, minimum_support, algorithm_choice, frequent_itemsets)
         self._print_result(lines)
-
+        
     
+    def _input_value(self, value, minimum=1, maximum=None):
+        value_int = int(value.get())
+        
+        if (minimum is not None and value_int < minimum):
+            return minimum
+        elif (maximum is not None and value_int > maximum):
+            return maximum
+        else:
+            return value_int
+    
+
     def _print_result(self, lines):
         self.output.insert(tkinter.END, "\n".join(lines) + "\n")
         self.output.see(tkinter.END)
@@ -44,12 +55,12 @@ class GUI(tkinter.Tk):
 
     def _build_gui(self):
         self.title("Symbolic Data Mining")
-        
-        self.rows = tkinter.IntVar(value=5)
-        self.columns = tkinter.IntVar(value=5)
-        self.density = tkinter.IntVar(value=50)
-        self.minimum_support = tkinter.IntVar(value=2)
-        self.algorithm_choice = tkinter.IntVar(value=1)
+
+        self.rows             = tkinter.IntVar()
+        self.columns          = tkinter.IntVar()
+        self.density          = tkinter.IntVar()
+        self.minimum_support  = tkinter.IntVar()
+        self.algorithm_choice = tkinter.IntVar()
 
         frame = tkinter.Frame(self)
         frame.pack(padx=5, pady=5, anchor="w")
