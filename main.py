@@ -20,5 +20,5 @@ def run_algorithm(dataset, minimum_support, algorithm_choice):
     raise ValueError(f"Unknown algorithm: {algorithm_choice}")
 
 
-CLI(create_dataset, run_algorithm, output_dataset, output_summary)
-# GUI(create_dataset, run_algorithm, output_summary)
+# CLI(create_dataset, run_algorithm, output_dataset, output_summary)
+GUI(create_dataset, run_algorithm, output_dataset, output_summary)

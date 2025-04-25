@@ -3,17 +3,40 @@ from tkinter import scrolledtext
 
 
 class GUI(tkinter.Tk):    
-    def __init__(self, create_dataset, run_algorithm, output_summary):       
+    def __init__(self, create_dataset, run_algorithm, output_dataset, output_summary):       
         self.create_dataset = create_dataset
         self.run_algorithm = run_algorithm
+        self.output_dataset = output_dataset
         self.output_summary = output_summary
         
         super().__init__()
-
         self._build_gui()
         self._generate_dataset()
         self._generate_result()
         self.mainloop()
+
+
+    def _generate_dataset(self):
+        self.output.delete('1.0', tkinter.END)
+        
+        rows = self.rows.get()
+        columns = self.columns.get()
+        density = self.density.get()
+        self.dataset, self.labels = self.create_dataset(rows, columns, density)
+        
+        lines = self.output_dataset(self.dataset, self.labels)
+        self.output.insert(tkinter.END, "\n".join(lines) + "\n")
+        self.output.see(tkinter.END)
+
+
+    def _generate_result(self):       
+        minimum_support = self.minimum_support.get()
+        algorithm_choice = self.algorithm_choice.get()
+        frequent_itemsets = self.run_algorithm(self.dataset, minimum_support, algorithm_choice)
+        
+        lines = self.output_summary(self.dataset, self.labels, minimum_support, algorithm_choice, frequent_itemsets)
+        self.output.insert(tkinter.END, "\n".join(lines) + "\n")
+        self.output.see(tkinter.END)
 
 
     def _build_gui(self):
@@ -60,31 +83,6 @@ class GUI(tkinter.Tk):
 
         self.output = scrolledtext.ScrolledText(self, width=80, height=20)
         self.output.pack(fill='both', expand=True, padx=5, pady=5)
-
-
-    def _generate_dataset(self):
-        self.output.delete('1.0', tkinter.END)
-        
-        rows = self.rows.get()
-        columns = self.columns.get()
-        density = self.density.get()
-        self.dataset, self.labels = self.create_dataset(rows, columns, density)
-        
-        lines = self.output_summary(self.dataset, self.labels, minimum_support=0, algorithm_choice=0, frequent_itemsets={})
-        self.output.insert(tkinter.END, "\n".join(lines) + "\n")
-        self.output.see(tkinter.END)
-
-
-    def _generate_result(self):
-        self.output.delete('1.0', tkinter.END)
-        
-        minimum_support = self.minimum_support.get()
-        algorithm_choice = self.algorithm_choice.get()
-        frequent_itemsets = self.run_algorithm(self.dataset, minimum_support, algorithm_choice)
-        
-        lines = self.output_summary(self.dataset, self.labels, minimum_support, algorithm_choice, frequent_itemsets)
-        self.output.insert(tkinter.END, "\n".join(lines) + "\n")
-        self.output.see(tkinter.END)          
 
 
     def _show_notes(self):
