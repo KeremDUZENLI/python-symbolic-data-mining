@@ -5,7 +5,7 @@ from interface.cli         import CLI
 from interface.gui         import GUI
 
 from helper.dataset     import create_dataset
-from helper.output      import output_summary
+from helper.output      import output_dataset, output_summary
 
 
 def run_algorithm(dataset, minimum_support, algorithm_choice):
@@ -20,5 +20,5 @@ def run_algorithm(dataset, minimum_support, algorithm_choice):
     raise ValueError(f"Unknown algorithm: {algorithm_choice}")
 
 
-CLI(create_dataset, run_algorithm, output_summary)
-GUI(create_dataset, run_algorithm, output_summary)
+CLI(create_dataset, run_algorithm, output_dataset, output_summary)
+# GUI(create_dataset, run_algorithm, output_summary)
