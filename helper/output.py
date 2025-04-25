@@ -11,7 +11,7 @@ def output_dataset(dataset, labels):
         cells = ["X" if column in symbol_X else " " for column in labels]
         lines.append(f"{idx:>{pad}} " + sep.join(cells))
 
-    lines.append("\n--------------------------------------------------\n")
+    lines.append("\n--------------------------------------------------")
     return lines
 
 
@@ -28,7 +28,7 @@ def output_summary(dataset, labels, minimum_support, algorithm_choice, frequent_
     lines.append(f"Chosen algorithm        : {algorithm_choice}")
     lines.append(f"FIs & FCIs              : {len(frequent_itemsets)}")
     
-    lines.append("\n--------------------------------------------------\n")
+    lines.append("\n--------------------------------------------------")
     return lines
 
 
