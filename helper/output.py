@@ -44,4 +44,6 @@ def draw_dataset(dataset, labels):
 
 def sort_itemset(itemsets):
     sorted_itemsets = sorted(itemsets.items(), key=lambda kv: (len(kv[0]), sorted(kv[0])))
-    return [f"{sorted(itemset)} : {support}" for itemset, support in sorted_itemsets]
+    lines = [f"{sorted(itemset)} : {support}" for itemset, support in sorted_itemsets]
+    
+    return lines
