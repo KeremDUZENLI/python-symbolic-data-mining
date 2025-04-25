@@ -20,17 +20,6 @@ def apriori_close(dataset, minimum_support):
     return all_closed_itemsets
 
 
-def create_supersets(prev_itemsets, itemset_size):
-    supersets = set()
-    itemsets_list = list(prev_itemsets)
-    for i in range(len(itemsets_list)):
-        for j in range(i + 1, len(itemsets_list)):
-            candidate = itemsets_list[i] | itemsets_list[j]
-            if len(candidate) == itemset_size:
-                supersets.add(candidate)
-    return supersets
-
-
 def find_frequent_itemsets(dataset, prev_itemsets, minimum_support):
     each_itemset_frequency = {itemset: 0 for itemset in prev_itemsets}
     for row in dataset:
@@ -53,3 +42,14 @@ def find_closed_itemsets(dataset):
         if is_closed:
             closed_itemsets[I] = support_I
     return closed_itemsets
+
+
+def create_supersets(prev_itemsets, itemset_size):
+    supersets = set()
+    itemsets_list = list(prev_itemsets)
+    for i in range(len(itemsets_list)):
+        for j in range(i + 1, len(itemsets_list)):
+            candidate = itemsets_list[i] | itemsets_list[j]
+            if len(candidate) == itemset_size:
+                supersets.add(candidate)
+    return supersets

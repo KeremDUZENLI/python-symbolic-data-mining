@@ -1,7 +1,7 @@
 import random
 
 
-def generate_dataset(rows, columns, density):
+def create_dataset(rows, columns, density):
     def col_label(i):
         label = ""
         while True:
