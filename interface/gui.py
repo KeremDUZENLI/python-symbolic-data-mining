@@ -25,16 +25,19 @@ class GUI(tkinter.Tk):
         self.dataset, self.labels = self.create_dataset(rows, columns, density)
         
         lines = self.output_dataset(self.dataset, self.labels)
-        self.output.insert(tkinter.END, "\n".join(lines) + "\n")
-        self.output.see(tkinter.END)
+        self._print_result(lines)
 
-
-    def _generate_result(self):       
+        
+    def _generate_result(self):
         minimum_support = self.minimum_support.get()
         algorithm_choice = self.algorithm_choice.get()
         frequent_itemsets = self.run_algorithm(self.dataset, minimum_support, algorithm_choice)
         
         lines = self.output_summary(self.dataset, self.labels, minimum_support, algorithm_choice, frequent_itemsets)
+        self._print_result(lines)
+
+    
+    def _print_result(self, lines):
         self.output.insert(tkinter.END, "\n".join(lines) + "\n")
         self.output.see(tkinter.END)
 
@@ -65,12 +68,12 @@ class GUI(tkinter.Tk):
         ]
         
         for row, parameters in enumerate(dataset_fields):
-            self._add_field(left, row, *parameters)
-        tkinter.Button(left, text="Create Dataset", command=self._generate_dataset).grid(row=len(dataset_fields), column=0, columnspan=2, pady=(10,2))
+            self._build_field(left, row, *parameters)
+        tkinter.Button(left, text="Generate Dataset", command=self._generate_dataset).grid(row=len(dataset_fields), column=0, columnspan=2, pady=(10,2))
 
         for row, parameters in enumerate(algorithm_fields):
-            self._add_field(right, row, *parameters)
-        tkinter.Button(right, text="Run Algorithm", command=self._generate_result).grid(row=len(algorithm_fields), column=0, columnspan=2, pady=(10,2))
+            self._build_field(right, row, *parameters)
+        tkinter.Button(right, text="Generate Result", command=self._generate_result).grid(row=len(algorithm_fields), column=0, columnspan=2, pady=(10,2))
 
         tkinter.Button(right, text="Show Notes", command=self._show_notes).grid(row=len(algorithm_fields), column=2, columnspan=2, pady=(10,2))
 
@@ -78,7 +81,7 @@ class GUI(tkinter.Tk):
         self.output.pack(fill='both', expand=True, padx=5, pady=5)
 
 
-    def _add_field(self, position, row, label, value, minimum, maximum):
+    def _build_field(self, position, row, label, value, minimum, maximum):
         tkinter.Label(position, text=label).grid(row=row, column=0, sticky="w", padx=2, pady=2)
         validator = (self.register(lambda P, lo=minimum, hi=maximum: self._validate(P, lo, hi)), '%P')
         tkinter.Entry(position, textvariable=value, width=5, validate='key', validatecommand=validator).grid(row=row, column=1, padx=2, pady=2)
