@@ -11,8 +11,6 @@ class GUI(tkinter.Tk):
         
         super().__init__()
         self._build_gui()
-        self._generate_dataset()
-        self._generate_result()
         self.mainloop()
 
 
@@ -37,17 +35,21 @@ class GUI(tkinter.Tk):
         self._print_result(lines)
         
     
-    def _input_value(self, value, minimum=1, maximum=None):     
-        value_int = int(value.get())
+    def _input_value(self, value, minimum=1, maximum=None):            
+        try:
+            value_int = int(value.get())
+        except:
+            value_int = minimum
         
         if (minimum is not None and value_int < minimum):
-            return minimum
-        elif (maximum is not None and value_int > maximum):
-            return maximum
-        else:
-            return value_int
-    
-    
+            value_int = minimum
+        if (maximum is not None and value_int > maximum):
+            value_int = maximum
+        
+        value.set(value_int)
+        return value_int
+
+
     def _build_gui(self):
         frame = tkinter.Frame(self)
         frame.pack(padx=5, pady=5, anchor="w")
