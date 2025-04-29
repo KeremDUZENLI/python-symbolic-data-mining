@@ -14,10 +14,12 @@ class GUI(tkinter.Tk):
             "rows"              : (1, 10),
             "columns"           : (1, 10),
             "density"           : (1, 100),
-            "minimum_support"   : (1, None),
+            "minimum_support"   : None,
             "confidence"        : (1, 10),
             "algorithm_choice"  : (1, 3),
         }
+        self.rules["minimum_support"] = self.rules["rows"][0], self.rules["rows"][1]
+        
         self._build_gui()
         self.mainloop()
 
@@ -82,11 +84,11 @@ class GUI(tkinter.Tk):
         frame.pack(padx=5, pady=5, anchor="w")
         
         self.title("Symbolic Data Mining")
-        self.rows             = tkinter.IntVar()
-        self.columns          = tkinter.IntVar()
-        self.density          = tkinter.IntVar()
-        self.minimum_support  = tkinter.IntVar()
-        self.algorithm_choice = tkinter.IntVar()
+        self.rows             = tkinter.IntVar(value=self.rules['rows'][0])
+        self.columns          = tkinter.IntVar(value=self.rules['columns'][0])
+        self.density          = tkinter.IntVar(value=self.rules['density'][0])
+        self.minimum_support  = tkinter.IntVar(value=self.rules['minimum_support'][0])
+        self.algorithm_choice = tkinter.IntVar(value=self.rules['algorithm_choice'][0])
 
         self.minimum_support_dynamic_label = tkinter.Label(frame, text=f"Minimum Support ({self.rules['minimum_support'][0]} - {self.rules['minimum_support'][1]})")
         
