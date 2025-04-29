@@ -15,7 +15,7 @@ class GUI(tkinter.Tk):
             "columns"           : (1, 10),
             "density"           : (1, 100),
             "minimum_support"   : (1, None),
-            "confidence"        : (1,10),
+            "confidence"        : (1, 10),
             "algorithm_choice"  : (1, 3),
         }
         self._build_gui()
@@ -34,9 +34,7 @@ class GUI(tkinter.Tk):
         self.output.insert(tkinter.END, "\n".join(lines) + "\n")
         self.output.see(tkinter.END)
         
-        self.minimum_support_dynamic_label.config(text=f"Minimum Support (1 - {rows})")
-        # self.minimum_support_dynamic_label.config(text=f"Minimum Support {self._input_label('minimum_support')}")
-        # self.minimum_support_dynamic_label = tkinter.Label(frame, text=f"Minimum Support {self._input_label('minimum_support')}")
+        self.minimum_support_dynamic_label.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {rows})")
 
 
     def _generate_result(self):
@@ -77,11 +75,6 @@ class GUI(tkinter.Tk):
         
         value.set(value_int)
         return value_int
-    
-    
-    def _input_label(self, label_name):
-        minimum, maximum = self.rules[label_name]
-        return f"({minimum} - {maximum})"
 
 
     def _build_gui(self):
@@ -95,29 +88,29 @@ class GUI(tkinter.Tk):
         self.minimum_support  = tkinter.IntVar()
         self.algorithm_choice = tkinter.IntVar()
 
-        self.minimum_support_dynamic_label = tkinter.Label(frame, text=f"Minimum Support {self._input_label('minimum_support')}")
+        self.minimum_support_dynamic_label = tkinter.Label(frame, text=f"Minimum Support ({self.rules['minimum_support'][0]} - {self.rules['minimum_support'][1]})")
         
-        tkinter.Label(frame, text=f"Number of Rows {self._input_label('rows')}")                .grid(row=0, column=0, sticky="w", padx=2, pady=2)
-        tkinter.Entry(frame, textvariable=self.rows, width=5, validate='key')                   .grid(row=0, column=1, sticky="w", padx=2, pady=2)
+        tkinter.Label(frame, text=f"Number of Rows ({self.rules['rows'][0]} - {self.rules['rows'][1]})")            .grid(row=0, column=0, sticky="w", padx=2, pady=2)
+        tkinter.Entry(frame, textvariable=self.rows, width=5, validate='key')                                       .grid(row=0, column=1, sticky="w", padx=2, pady=2)
 
-        tkinter.Label(frame, text=f"Number of Columns {self._input_label('columns')}")          .grid(row=1, column=0, sticky="w", padx=2, pady=2)
-        tkinter.Entry(frame, textvariable=self.columns, width=5, validate='key')                .grid(row=1, column=1, sticky="w", padx=2, pady=2)
+        tkinter.Label(frame, text=f"Number of Columns ({self.rules['columns'][0]} - {self.rules['columns'][1]})")   .grid(row=1, column=0, sticky="w", padx=2, pady=2)
+        tkinter.Entry(frame, textvariable=self.columns, width=5, validate='key')                                    .grid(row=1, column=1, sticky="w", padx=2, pady=2)
 
-        tkinter.Label(frame, text=f"Density {self._input_label('density')}")                    .grid(row=2, column=0, sticky="w", padx=2, pady=2)
-        tkinter.Entry(frame, textvariable=self.density, width=5, validate='key')                .grid(row=2, column=1, sticky="w", padx=2, pady=2)
+        tkinter.Label(frame, text=f"Density ({self.rules['density'][0]} - {self.rules['density'][1]})")             .grid(row=2, column=0, sticky="w", padx=2, pady=2)
+        tkinter.Entry(frame, textvariable=self.density, width=5, validate='key')                                    .grid(row=2, column=1, sticky="w", padx=2, pady=2)
         
-        self.minimum_support_dynamic_label                                                      .grid(row=0, column=5, sticky="w", padx=2, pady=2)
-        tkinter.Entry(frame, textvariable=self.minimum_support, width=5, validate='key')        .grid(row=0, column=6, sticky="w", padx=2, pady=2)
+        self.minimum_support_dynamic_label                                                                          .grid(row=0, column=5, sticky="w", padx=2, pady=2)
+        tkinter.Entry(frame, textvariable=self.minimum_support, width=5, validate='key')                            .grid(row=0, column=6, sticky="w", padx=2, pady=2)
         
-        tkinter.Label(frame, text=f"Confidence {self._input_label('confidence')}")              .grid(row=1, column=5, sticky="w", padx=2, pady=2)
-        tkinter.Entry(frame, textvariable=None, width=5, validate='key')                        .grid(row=1, column=6, sticky="w", padx=2, pady=2)
+        tkinter.Label(frame, text=f"Confidence ({self.rules['confidence'][0]} - {self.rules['confidence'][1]})")    .grid(row=1, column=5, sticky="w", padx=2, pady=2)
+        tkinter.Entry(frame, textvariable=None, width=5, validate='key')                                            .grid(row=1, column=6, sticky="w", padx=2, pady=2)
         
-        tkinter.Label(frame, text=f"1)Apriori | 2)Apriori-Close | 3)Eclat ")                    .grid(row=2, column=5, sticky="w", padx=2, pady=2)
-        tkinter.Entry(frame, textvariable=self.algorithm_choice, width=5, validate='key')       .grid(row=2, column=6, sticky="w", padx=2, pady=2)
+        tkinter.Label(frame, text=f"1)Apriori | 2)Apriori-Close | 3)Eclat ")                                        .grid(row=2, column=5, sticky="w", padx=2, pady=2)
+        tkinter.Entry(frame, textvariable=self.algorithm_choice, width=5, validate='key')                           .grid(row=2, column=6, sticky="w", padx=2, pady=2)
 
-        tkinter.Button(frame, text="Generate Dataset", command=self._generate_dataset)          .grid(row=3, column=0, sticky="w", padx=2, pady=2)
-        tkinter.Button(frame, text="Generate Result", command=self._generate_result)            .grid(row=3, column=4, sticky="w", padx=2, pady=2)
-        tkinter.Button(frame, text="Show Notes", command=self._generate_notes)                  .grid(row=3, column=7, sticky="w", padx=2, pady=2)
+        tkinter.Button(frame, text="Generate Dataset", command=self._generate_dataset)                              .grid(row=3, column=0, sticky="w", padx=2, pady=2)
+        tkinter.Button(frame, text="Generate Result", command=self._generate_result)                                .grid(row=3, column=4, sticky="w", padx=2, pady=2)
+        tkinter.Button(frame, text="Show Notes", command=self._generate_notes)                                      .grid(row=3, column=7, sticky="w", padx=2, pady=2)
         
         self.output = scrolledtext.ScrolledText(self, width=80, height=20)
         self.output.pack(fill='both', expand=True, padx=5, pady=5)
