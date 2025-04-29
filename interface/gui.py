@@ -33,6 +33,10 @@ class GUI(tkinter.Tk):
         lines = self.output_dataset(self.dataset, self.labels)
         self.output.insert(tkinter.END, "\n".join(lines) + "\n")
         self.output.see(tkinter.END)
+        
+        self.minimum_support_dynamic_label.config(text=f"Minimum Support (1 - {rows})")
+        # self.minimum_support_dynamic_label.config(text=f"Minimum Support {self._input_label('minimum_support')}")
+        # self.minimum_support_dynamic_label = tkinter.Label(frame, text=f"Minimum Support {self._input_label('minimum_support')}")
 
 
     def _generate_result(self):
@@ -57,9 +61,10 @@ class GUI(tkinter.Tk):
             self.tk.call('exec', 'xdg-open', pdf)
         
     
-    def _input_value(self, value, label_name):
+    def _input_value(self, value, label_name):      
         minimum, maximum = self.rules.get(label_name, (None, None))
-                 
+        maximum = self.rows.get() if label_name == "minimum_support" else maximum
+  
         try:
             value_int = int(value.get())
         except:
@@ -90,6 +95,8 @@ class GUI(tkinter.Tk):
         self.minimum_support  = tkinter.IntVar()
         self.algorithm_choice = tkinter.IntVar()
 
+        self.minimum_support_dynamic_label = tkinter.Label(frame, text=f"Minimum Support {self._input_label('minimum_support')}")
+        
         tkinter.Label(frame, text=f"Number of Rows {self._input_label('rows')}")                .grid(row=0, column=0, sticky="w", padx=2, pady=2)
         tkinter.Entry(frame, textvariable=self.rows, width=5, validate='key')                   .grid(row=0, column=1, sticky="w", padx=2, pady=2)
 
@@ -99,7 +106,7 @@ class GUI(tkinter.Tk):
         tkinter.Label(frame, text=f"Density {self._input_label('density')}")                    .grid(row=2, column=0, sticky="w", padx=2, pady=2)
         tkinter.Entry(frame, textvariable=self.density, width=5, validate='key')                .grid(row=2, column=1, sticky="w", padx=2, pady=2)
         
-        tkinter.Label(frame, text=f"Minimum Support {self._input_label('minimum_support')}")    .grid(row=0, column=5, sticky="w", padx=2, pady=2)
+        self.minimum_support_dynamic_label                                                      .grid(row=0, column=5, sticky="w", padx=2, pady=2)
         tkinter.Entry(frame, textvariable=self.minimum_support, width=5, validate='key')        .grid(row=0, column=6, sticky="w", padx=2, pady=2)
         
         tkinter.Label(frame, text=f"Confidence {self._input_label('confidence')}")              .grid(row=1, column=5, sticky="w", padx=2, pady=2)
