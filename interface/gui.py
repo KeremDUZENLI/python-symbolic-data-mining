@@ -111,7 +111,7 @@ class GUI(tkinter.Tk):
         self.minimum_confidence_label                                                                               .grid(row=1, column=5, sticky="w", padx=2, pady=2)
         tkinter.Entry(frame, textvariable=self.minimum_confidence, width=5, validate='key')                         .grid(row=1, column=6, sticky="w", padx=2, pady=2)
         
-        tkinter.Label(frame, text=f"1)Apriori | 2)Apriori-Close | 3)Eclat ")                                        .grid(row=2, column=5, sticky="w", padx=2, pady=2)
+        tkinter.Label(frame, text=f"1)Apriori  |  2)Apriori-Close\n3)Eclat  |  4)Association_Rule")                 .grid(row=2, column=5, sticky="w", padx=2, pady=2)
         tkinter.Entry(frame, textvariable=self.algorithm_choice, width=5, validate='key')                           .grid(row=2, column=6, sticky="w", padx=2, pady=2)
 
         tkinter.Button(frame, text="Generate Dataset", command=self._generate_dataset)                              .grid(row=3, column=0, sticky="w", padx=2, pady=2)

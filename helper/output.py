@@ -32,7 +32,7 @@ def output_summary(dataset, labels, minimum_support, minimum_confidence, algorit
     lines.append(f"Total number of columns : {len(labels)}")
     lines.append(f"Density                 : {sum(len(x) for x in dataset) / (len(dataset) * len(labels) or 1):.2%}")
     lines.append(f"Minimum support         : {minimum_support}")
-    lines.append(f"Minimum support         : {minimum_confidence:.2%}")
+    lines.append(f"Minimum confidence      : {(minimum_confidence / 100):.2%}")
     lines.append(f"Chosen algorithm        : {algorithm_choice}")
     lines.append(f"FIs & FCIs              : {len(all_frequent_itemsets)}")
     
