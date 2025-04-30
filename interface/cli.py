@@ -22,10 +22,11 @@ class CLI():
 
     def _generate_result(self):
         minimum_support = self._input_value("Minimum Support", maximum=self.rows)
-        algorithm_choice = self._input_value("1)Apriori  |  2)Apriori-Close  |  3)Eclat", maximum=3)
-        all_frequent_itemsets = self.run_algorithm(self.dataset, minimum_support, algorithm_choice)
+        minimum_confidence = self._input_value("Minimum Confidence", maximum=100)
+        algorithm_choice = self._input_value("1)Apriori  |  2)Apriori-Close\n3)Eclat  |  4)Association_Rule", maximum=4)
+        all_frequent_itemsets = self.run_algorithm(self.dataset, minimum_support, minimum_confidence, algorithm_choice)
 
-        lines = self.output_summary(self.dataset, self.labels, minimum_support, algorithm_choice, all_frequent_itemsets)
+        lines = self.output_summary(self.dataset, self.labels, minimum_support, minimum_confidence, algorithm_choice, all_frequent_itemsets)
         print(*lines, sep='\n')
 
 
