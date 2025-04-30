@@ -23,9 +23,9 @@ class CLI():
     def _generate_result(self):
         minimum_support = self._input_value("Minimum Support", maximum=self.rows)
         algorithm_choice = self._input_value("1)Apriori  |  2)Apriori-Close  |  3)Eclat", maximum=3)
-        frequent_itemsets = self.run_algorithm(self.dataset, minimum_support, algorithm_choice)
+        all_frequent_itemsets = self.run_algorithm(self.dataset, minimum_support, algorithm_choice)
 
-        lines = self.output_summary(self.dataset, self.labels, minimum_support, algorithm_choice, frequent_itemsets)
+        lines = self.output_summary(self.dataset, self.labels, minimum_support, algorithm_choice, all_frequent_itemsets)
         print(*lines, sep='\n')
 
 

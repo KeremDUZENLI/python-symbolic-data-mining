@@ -11,14 +11,14 @@ class GUI(tkinter.Tk):
         super().__init__()
 
         self.rules = {
-            "rows"              : (1, 10),
-            "columns"           : (1, 10),
-            "density"           : (1, 100),
+            "rows"              : (5, 10),
+            "columns"           : (5, 10),
+            "density"           : (50, 100),
             "minimum_support"   : None,
             "confidence"        : (1, 10),
             "algorithm_choice"  : (1, 3),
         }
-        self.rules["minimum_support"] = self.rules["rows"][0], self.rules["rows"][1]
+        self.rules["minimum_support"] = 1, self.rules["rows"][1]
         
         self._build_gui()
         self.mainloop()
@@ -30,6 +30,7 @@ class GUI(tkinter.Tk):
         rows    = self._input_value(self.rows,      "rows")
         columns = self._input_value(self.columns,   "columns")
         density = self._input_value(self.density,   "density")
+        
         self.dataset, self.labels = self.create_dataset(rows, columns, density)
         
         lines = self.output_dataset(self.dataset, self.labels)
@@ -40,11 +41,13 @@ class GUI(tkinter.Tk):
 
 
     def _generate_result(self):
-        minimum_support  = self._input_value(self.minimum_support,  "minimum_support")
-        algorithm_choice = self._input_value(self.algorithm_choice, "algorithm_choice")
-        frequent_itemsets = self.run_algorithm(self.dataset, minimum_support, algorithm_choice)
+        minimum_support     = self._input_value(self.minimum_support,   "minimum_support")
+        confidence          = self._input_value(self.confidence,        "confidence")
+        algorithm_choice    = self._input_value(self.algorithm_choice,  "algorithm_choice")
         
-        lines = self.output_summary(self.dataset, self.labels, minimum_support, algorithm_choice, frequent_itemsets)
+        all_frequent_itemsets = self.run_algorithm(self.dataset, minimum_support, algorithm_choice)
+        
+        lines = self.output_summary(self.dataset, self.labels, minimum_support, algorithm_choice, all_frequent_itemsets)
         self.output.insert(tkinter.END, "\n".join(lines) + "\n")
         self.output.see(tkinter.END)
         
@@ -88,10 +91,9 @@ class GUI(tkinter.Tk):
         self.columns          = tkinter.IntVar(value=self.rules['columns'][0])
         self.density          = tkinter.IntVar(value=self.rules['density'][0])
         self.minimum_support  = tkinter.IntVar(value=self.rules['minimum_support'][0])
+        self.confidence       = tkinter.IntVar(value=self.rules['confidence'][0])
         self.algorithm_choice = tkinter.IntVar(value=self.rules['algorithm_choice'][0])
 
-        self.minimum_support_dynamic_label = tkinter.Label(frame, text=f"Minimum Support ({self.rules['minimum_support'][0]} - {self.rules['minimum_support'][1]})")
-        
         tkinter.Label(frame, text=f"Number of Rows ({self.rules['rows'][0]} - {self.rules['rows'][1]})")            .grid(row=0, column=0, sticky="w", padx=2, pady=2)
         tkinter.Entry(frame, textvariable=self.rows, width=5, validate='key')                                       .grid(row=0, column=1, sticky="w", padx=2, pady=2)
 
@@ -101,11 +103,12 @@ class GUI(tkinter.Tk):
         tkinter.Label(frame, text=f"Density ({self.rules['density'][0]} - {self.rules['density'][1]})")             .grid(row=2, column=0, sticky="w", padx=2, pady=2)
         tkinter.Entry(frame, textvariable=self.density, width=5, validate='key')                                    .grid(row=2, column=1, sticky="w", padx=2, pady=2)
         
+        self.minimum_support_dynamic_label = tkinter.Label(frame, text=f"Minimum Support ({self.rules['minimum_support'][0]} - {self.rules['minimum_support'][1]})")
         self.minimum_support_dynamic_label                                                                          .grid(row=0, column=5, sticky="w", padx=2, pady=2)
         tkinter.Entry(frame, textvariable=self.minimum_support, width=5, validate='key')                            .grid(row=0, column=6, sticky="w", padx=2, pady=2)
         
         tkinter.Label(frame, text=f"Confidence ({self.rules['confidence'][0]} - {self.rules['confidence'][1]})")    .grid(row=1, column=5, sticky="w", padx=2, pady=2)
-        tkinter.Entry(frame, textvariable=None, width=5, validate='key')                                            .grid(row=1, column=6, sticky="w", padx=2, pady=2)
+        tkinter.Entry(frame, textvariable=self.confidence, width=5, validate='key')                                 .grid(row=1, column=6, sticky="w", padx=2, pady=2)
         
         tkinter.Label(frame, text=f"1)Apriori | 2)Apriori-Close | 3)Eclat ")                                        .grid(row=2, column=5, sticky="w", padx=2, pady=2)
         tkinter.Entry(frame, textvariable=self.algorithm_choice, width=5, validate='key')                           .grid(row=2, column=6, sticky="w", padx=2, pady=2)
