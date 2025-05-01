@@ -14,9 +14,9 @@ class GUI(tkinter.Tk):
             "rows"               : (5, 10),
             "columns"            : (5, 10),
             "density"            : (50, 100),
+            "algorithm_choice"   : (1, 4),
             "minimum_support"    : None,
             "minimum_confidence" : (1, 100),
-            "algorithm_choice"   : (1, 4),
         }
         self.rules["minimum_support"] = 1, self.rules["rows"][1]
         
@@ -43,9 +43,9 @@ class GUI(tkinter.Tk):
         minimum_support     = self._input_value(self.minimum_support,    "minimum_support")
         minimum_confidence  = self._input_value(self.minimum_confidence, "minimum_confidence")
         
-        all_frequent_itemsets = self.run_algorithm(self.dataset, minimum_support, minimum_confidence, algorithm_choice)
+        all_frequent_itemsets, algorithm_name = self.run_algorithm(self.dataset, minimum_support, minimum_confidence, algorithm_choice)
         
-        lines = self.output_summary(self.dataset, self.labels, minimum_support, minimum_confidence, algorithm_choice, all_frequent_itemsets)
+        lines = self.output_summary(self.dataset, self.labels, minimum_support, minimum_confidence, algorithm_name, all_frequent_itemsets)
         self.output.insert(tkinter.END, "\n".join(lines) + "\n")
         self.output.see(tkinter.END)
 
