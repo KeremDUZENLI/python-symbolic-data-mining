@@ -35,7 +35,7 @@ class GUI(tkinter.Tk):
         self.output.insert(tkinter.END, "\n".join(lines) + "\n")
         self.output.see(tkinter.END)
         
-        self.minimum_support_dynamic_label.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {rows})")
+        self.label_minimum_support.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {rows})")
 
 
     def _generate_result(self):
@@ -90,40 +90,52 @@ class GUI(tkinter.Tk):
         
         self.geometry("600x600")
         self.title("Symbolic Data Mining")
-        self.rows               = tkinter.IntVar(value=self.rules['rows'][0])
-        self.columns            = tkinter.IntVar(value=self.rules['columns'][0])
-        self.density            = tkinter.IntVar(value=self.rules['density'][0])
-        self.minimum_support    = tkinter.IntVar(value=self.rules['minimum_support'][0])
-        self.minimum_confidence = tkinter.IntVar(value=self.rules['minimum_confidence'][0])
-        self.algorithm_choice   = tkinter.IntVar(value=self.rules['algorithm_choice'][0])
 
-        tkinter.Label(frame, text=f"Number of Rows ({self.rules['rows'][0]} - {self.rules['rows'][1]})")            .place(x=0, y=0, width=190, height=25)
-        tkinter.Entry(frame, textvariable=self.rows, width=5, validate='key')                                       .place(x=200, y=0, width=50, height=25)
+        self.rows                     = tkinter.IntVar(value=self.rules['rows'][0])
+        self.columns                  = tkinter.IntVar(value=self.rules['columns'][0])
+        self.density                  = tkinter.IntVar(value=self.rules['density'][0])
+        self.algorithm_choice         = tkinter.IntVar(value=self.rules['algorithm_choice'][0])
+        self.minimum_support          = tkinter.IntVar(value=self.rules['minimum_support'][0])
+        self.minimum_confidence       = tkinter.IntVar(value=self.rules['minimum_confidence'][0])
 
-        tkinter.Label(frame, text=f"Number of Columns ({self.rules['columns'][0]} - {self.rules['columns'][1]})")   .place(x=0, y=50, width=190, height=25)
-        tkinter.Entry(frame, textvariable=self.columns, width=5, validate='key')                                    .place(x=200, y=50, width=50, height=25)
-
-        tkinter.Label(frame, text=f"Density ({self.rules['density'][0]} - {self.rules['density'][1]})")             .place(x=0, y=100, width=190, height=25)
-        tkinter.Entry(frame, textvariable=self.density, width=5, validate='key')                                    .place(x=200, y=100, width=50, height=25)
-
-
-        tkinter.Label(frame, text=f"1)Apriori  |  2)Apriori-Close\n3)Eclat  |  4)Association_Rule")                 .place(x=300, y=0, width=190, height=25)
-        tkinter.Entry(frame, textvariable=self.algorithm_choice, width=5, validate='key')                           .place(x=500, y=0, width=50, height=25)
-
-        self.minimum_support_dynamic_label = tkinter.Label(frame, text=f"Minimum Support ({self.rules['minimum_support'][0]} - {self.rules['minimum_support'][1]})")
-        self.minimum_support_dynamic_label                                                                          .place(x=300, y=50, width=190, height=25)
-        tkinter.Entry(frame, textvariable=self.minimum_support, width=5, validate='key')                            .place(x=500, y=50, width=50, height=25)
-
-        self.minimum_confidence_label = tkinter.Label(frame, text=f"Minimum Confidence ({self.rules['minimum_confidence'][0]} - {self.rules['minimum_confidence'][1]})")
-        self.minimum_confidence_label                                                                               .place(x=300, y=100, width=190, height=25)
-        tkinter.Entry(frame, textvariable=self.minimum_confidence, width=5, validate='key')                         .place(x=500, y=100, width=50, height=25)
-
-
-        tkinter.Button(frame, text="Generate Dataset", command=self._generate_dataset)                              .place(x=0,  y=150, width=250, height=25)
-        tkinter.Button(frame, text="Generate Result", command=self._generate_result)                                .place(x=300, y=150, width=250, height=25)
+        label_rows                    = tkinter.Label(frame, text=f"Number of Rows ({self.rules['rows'][0]} - {self.rules['rows'][1]})", anchor='w', justify='left')            
+        label_columns                 = tkinter.Label(frame, text=f"Number of Columns ({self.rules['columns'][0]} - {self.rules['columns'][1]})", anchor='w', justify='left')
+        label_density                 = tkinter.Label(frame, text=f"Density ({self.rules['density'][0]} - {self.rules['density'][1]})", anchor='w', justify='left')             
+        label_algorithm_choice        = tkinter.Label(frame, text=f"1)Apriori  |  2)Apriori-Close\n3)Eclat  |  4)Association_Rule", anchor='w', justify='left')        
+        self.label_minimum_support    = tkinter.Label(frame, text=f"Minimum Support ({self.rules['minimum_support'][0]} - {self.rules['minimum_support'][1]})", anchor='w', justify='left')
+        label_minimum_confidence      = tkinter.Label(frame, text=f"Minimum Confidence ({self.rules['minimum_confidence'][0]} - {self.rules['minimum_confidence'][1]})", anchor='w', justify='left')
+                 
+        entry_rows                    = tkinter.Entry(frame, textvariable=self.rows, validate='key')                                                                            
+        entry_columns                 = tkinter.Entry(frame, textvariable=self.columns, validate='key')
+        entry_density                 = tkinter.Entry(frame, textvariable=self.density, validate='key')                                                                        
+        entry_algorithm_choice        = tkinter.Entry(frame, textvariable=self.algorithm_choice, validate='key')                                                                
+        entry_minimum_support         = tkinter.Entry(frame, textvariable=self.minimum_support, validate='key')                                                                 
+        entry_minimum_confidence      = tkinter.Entry(frame, textvariable=self.minimum_confidence, validate='key')    
         
-        tkinter.Button(frame, text="Clean Output", command=self._generate_clean_output)                             .place(x=75, y=200, width=100, height=25)
-        tkinter.Button(frame, text="Show Notes", command=self._generate_notes)                                      .place(x=375, y=200, width=100, height=25)
+        button_generate_dataset       = tkinter.Button(frame, text="Generate Dataset", command=self._generate_dataset)                                                          
+        button_generate_result        = tkinter.Button(frame, text="Generate Result",  command=self._generate_result)                                                              
+        button_generate_clean_output  = tkinter.Button(frame, text="Clean Output", command=self._generate_clean_output)                                                         
+        button_generate_notes         = tkinter.Button(frame, text="Show Notes", command=self._generate_notes)     
+                                                                     
+        self.output                   = scrolledtext.ScrolledText(frame)
 
-        self.output = scrolledtext.ScrolledText(frame)
-        self.output.place(x=0, y=250, width=550, height=300)
+        label_rows                    .place(x=0,   y=0,    width=190, height=25)
+        label_columns                 .place(x=0,   y=50,   width=190, height=25)
+        label_density                 .place(x=0,   y=100,  width=190, height=25)
+        label_algorithm_choice        .place(x=300, y=0,    width=190, height=25)
+        self.label_minimum_support    .place(x=300, y=50,   width=190, height=25)
+        label_minimum_confidence      .place(x=300, y=100,  width=190, height=25)
+        
+        entry_rows                    .place(x=200, y=0,    width=50,  height=25)
+        entry_columns                 .place(x=200, y=50,   width=50,  height=25)
+        entry_density                 .place(x=200, y=100,  width=50,  height=25)
+        entry_algorithm_choice        .place(x=500, y=0,    width=50,  height=25)
+        entry_minimum_support         .place(x=500, y=50,   width=50,  height=25)
+        entry_minimum_confidence      .place(x=500, y=100,  width=50,  height=25)
+                                   
+        button_generate_dataset       .place(x=0,  y=150, width=250, height=25)
+        button_generate_result        .place(x=300, y=150, width=250, height=25)
+        button_generate_clean_output  .place(x=75, y=200, width=100, height=25)
+        button_generate_notes         .place(x=375, y=200, width=100, height=25)
+
+        self.output                   .place(x=0, y=250, width=550, height=300)
