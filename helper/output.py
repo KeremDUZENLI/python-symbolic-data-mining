@@ -22,10 +22,10 @@ def output_summary(dataset, labels, minimum_support, minimum_confidence, algorit
     sorted_itemsets = sorted(all_frequent_itemsets.items(), key=lambda kv: (
         *( (len(kv[0][0]), len(kv[0][1])) if isinstance(kv[0], tuple) else (len(kv[0]), 0) ),
         *( (sorted(kv[0][0]), sorted(kv[0][1])) if isinstance(kv[0], tuple) else (sorted(kv[0]), []) )))
-           
-    lines.extend((f"{', '.join(sorted(itemset[0]))} => {', '.join(sorted(itemset[1]))} : {support}"
-                  if isinstance(itemset, tuple) else f"{', '.join(sorted(itemset))} : {support}")
-                  for itemset, support in sorted_itemsets)
+              
+    for itemset, support in sorted_itemsets:
+        line = _format_entry(itemset, support)
+        lines.append(line)
     
     lines.append("\n===== SUMMARY =====")
     lines.append(f"Total number of rows    : {len(dataset)}")
@@ -38,3 +38,16 @@ def output_summary(dataset, labels, minimum_support, minimum_confidence, algorit
     
     lines.append("\n--------------------------------------------------")
     return lines
+
+
+def _format_entry(itemset, support):
+    if isinstance(itemset, tuple):
+        A, B = itemset
+        AB = ''.join(sorted(A | B))
+        conf, suppAB, suppA = support
+        return (
+            f"{', '.join(sorted(A))} => {', '.join(sorted(B))} : "
+            f"(confidence({AB})={conf:.2f}% | support({AB})={suppAB} | "
+            f"support({''.join(sorted(B))})={suppA})"
+        )
+    return f"{', '.join(sorted(itemset))} : {support}"
