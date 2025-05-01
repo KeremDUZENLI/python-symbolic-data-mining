@@ -5,7 +5,7 @@ from tkinter import scrolledtext
 class GUI(tkinter.Tk):    
     def __init__(self, create_dataset, run_algorithm, output_dataset, output_summary):       
         self.create_dataset = create_dataset
-        self.run_algorithm = run_algorithm
+        self.run_algorithm  = run_algorithm
         self.output_dataset = output_dataset
         self.output_summary = output_summary
         super().__init__()
@@ -55,7 +55,7 @@ class GUI(tkinter.Tk):
 
 
     def _generate_notes(self):
-        pdf = self.tk.call('file', 'normalize', 'notes/Notes.pdf')
+        pdf    = self.tk.call('file', 'normalize', 'notes/Notes.pdf')
         system = self.tk.call('tk', 'windowingsystem')
 
         if system == 'win32':
@@ -68,7 +68,7 @@ class GUI(tkinter.Tk):
     
     def _input_value(self, value, label_name):      
         minimum, maximum = self.rules.get(label_name, (None, None))
-        maximum = self.rows.get() if label_name == "minimum_support" else maximum
+        maximum          = self.rows.get() if label_name == "minimum_support" else maximum
   
         try:
             value_int = int(value.get())
