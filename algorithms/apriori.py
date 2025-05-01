@@ -33,13 +33,13 @@ def association_rule(dataset, minimum_support, minimum_confidence):
             antecedent = frozenset(items[i] for i in range(len(itemset)) if (each_range >> i) & 1)
             support_A = all_frequent_itemsets.get(antecedent, 0)
 
-        if support_A == 0:
-            continue
-        
-        consequent = itemset - antecedent
-        confidence_AB = (support_AB / support_A) * 100
-        if confidence_AB >= minimum_confidence:
-            all_association_itemsets[(antecedent, consequent)] = (confidence_AB, support_AB, support_A)
+            if support_A == 0:
+                continue
+            
+            consequent = itemset - antecedent
+            confidence_AB = support_AB / support_A
+            if (confidence_AB * 100) >= minimum_confidence:
+                all_association_itemsets[(antecedent, consequent)] = (confidence_AB, support_AB, support_A)
 
     return all_association_itemsets
 

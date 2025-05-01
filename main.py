@@ -27,5 +27,4 @@ CLI(create_dataset, run_algorithm, output_dataset, output_summary)
 GUI(create_dataset, run_algorithm, output_dataset, output_summary)
 
 
-
 # <./core02_assrulex.sh sample/laszlo.rcf 3 50% -alg:apriori -rule:all --names>
