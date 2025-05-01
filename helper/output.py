@@ -18,40 +18,50 @@ def output_dataset(dataset, labels):
 def output_summary(dataset, labels, minimum_support, minimum_confidence, algorithm_choice, all_frequent_itemsets):
     lines = []
     
-    lines.append('\n===== ITEMSETS =====')   
-    sorted_itemsets = sorted(all_frequent_itemsets.items(), key=lambda kv: (
-        *( (len(kv[0][0]), len(kv[0][1])) if isinstance(kv[0], tuple) else (len(kv[0]), 0) ),
-        *( (sorted(kv[0][0]), sorted(kv[0][1])) if isinstance(kv[0], tuple) else (sorted(kv[0]), []) )))
-              
+    lines.append('\n===== ITEMSETS =====')      
+    sorted_itemsets = sorted(all_frequent_itemsets.items(), key=_sort_itemsets)
     for itemset, itemset_values in sorted_itemsets:
-        line = _format_entry(itemset, itemset_values)
-        lines.append(line)
+        line = _format_sorted_itemsets(itemset, itemset_values)
+        lines.append(line)      
     
     lines.append("\n===== SUMMARY =====")
     lines.append(f"Total number of rows    : {len(dataset)}")
     lines.append(f"Total number of columns : {len(labels)}")
     lines.append(f"Density                 : {sum(len(x) for x in dataset) / (len(dataset) * len(labels) or 1):.2%}")
+    lines.append(f"Chosen algorithm        : {algorithm_choice}")
     lines.append(f"Minimum support         : {minimum_support}")
     lines.append(f"Minimum confidence      : {(minimum_confidence / 100):.2%}")
-    lines.append(f"Chosen algorithm        : {algorithm_choice}")
     lines.append(f"FIs & FCIs              : {len(all_frequent_itemsets)}")
     
     lines.append("\n--------------------------------------------------")
     return lines
 
 
-def _format_entry(itemset, itemset_values):
+def _sort_itemsets(key_and_value):
+    itemset, _ = key_and_value
+    if isinstance(itemset, tuple):
+        lhs, rhs = itemset
+        return (len(lhs), len(rhs), sorted(lhs), sorted(rhs))
+    else:
+        return (len(itemset), 0, sorted(itemset), [])
+    
+    
+def _format_sorted_itemsets(itemset, itemset_values):
     if isinstance(itemset, tuple):
         A, B = itemset
-        AB = ''.join(sorted(A | B))
+        sorted_A = sorted(A)
+        sorted_B = sorted(B)
+        AB = ''.join(sorted_A + sorted_B)
         confidence, support_AB, support_A = itemset_values
-        return (
-            f"{', '.join(sorted(A))} => {', '.join(sorted(B))} : "
-            f"confidence({AB})={confidence:.2f}% | support({AB})={support_AB} | "
-            f"support({''.join(sorted(B))})={support_A}"
+        return(
+            f"{', '.join(sorted_A)} => {', '.join(sorted_B)} : "
+            f"(confidence({AB})={confidence:.2f}% | "
+            f"support({AB})={support_AB} | "
+            f"support({''.join(sorted_B)})={support_A})"
         )
     else:
-        return (
-            f"{', '.join(sorted(itemset))} : "
-            f"support({''.join(sorted(itemset))})={itemset_values}"
+        sorted_itemset = sorted(itemset)
+        support = itemset_values
+        return(
+            f"{', '.join(sorted_itemset)} : support({''.join(sorted_itemset)})={support}"
         )

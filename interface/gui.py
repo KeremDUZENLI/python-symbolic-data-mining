@@ -41,9 +41,9 @@ class GUI(tkinter.Tk):
 
 
     def _generate_result(self):
+        algorithm_choice    = self._input_value(self.algorithm_choice,   "algorithm_choice")
         minimum_support     = self._input_value(self.minimum_support,    "minimum_support")
         minimum_confidence  = self._input_value(self.minimum_confidence, "minimum_confidence")
-        algorithm_choice    = self._input_value(self.algorithm_choice,   "algorithm_choice")
         
         all_frequent_itemsets = self.run_algorithm(self.dataset, minimum_support, minimum_confidence, algorithm_choice)
         
@@ -103,16 +103,16 @@ class GUI(tkinter.Tk):
         tkinter.Label(frame, text=f"Density ({self.rules['density'][0]} - {self.rules['density'][1]})")             .grid(row=2, column=0, sticky="w", padx=2, pady=2)
         tkinter.Entry(frame, textvariable=self.density, width=5, validate='key')                                    .grid(row=2, column=1, sticky="w", padx=2, pady=2)
         
+        tkinter.Label(frame, text=f"1)Apriori  |  2)Apriori-Close\n3)Eclat  |  4)Association_Rule")                 .grid(row=0, column=5, sticky="w", padx=2, pady=2)
+        tkinter.Entry(frame, textvariable=self.algorithm_choice, width=5, validate='key')                           .grid(row=0, column=6, sticky="w", padx=2, pady=2)
+        
         self.minimum_support_dynamic_label = tkinter.Label(frame, text=f"Minimum Support ({self.rules['minimum_support'][0]} - {self.rules['minimum_support'][1]})")
-        self.minimum_support_dynamic_label                                                                          .grid(row=0, column=5, sticky="w", padx=2, pady=2)
-        tkinter.Entry(frame, textvariable=self.minimum_support, width=5, validate='key')                            .grid(row=0, column=6, sticky="w", padx=2, pady=2)
+        self.minimum_support_dynamic_label                                                                          .grid(row=1, column=5, sticky="w", padx=2, pady=2)
+        tkinter.Entry(frame, textvariable=self.minimum_support, width=5, validate='key')                            .grid(row=1, column=6, sticky="w", padx=2, pady=2)
         
         self.minimum_confidence_label = tkinter.Label(frame, text=f"Minimum Confidence ({self.rules['minimum_confidence'][0]} - {self.rules['minimum_confidence'][1]})")
-        self.minimum_confidence_label                                                                               .grid(row=1, column=5, sticky="w", padx=2, pady=2)
-        tkinter.Entry(frame, textvariable=self.minimum_confidence, width=5, validate='key')                         .grid(row=1, column=6, sticky="w", padx=2, pady=2)
-        
-        tkinter.Label(frame, text=f"1)Apriori  |  2)Apriori-Close\n3)Eclat  |  4)Association_Rule")                 .grid(row=2, column=5, sticky="w", padx=2, pady=2)
-        tkinter.Entry(frame, textvariable=self.algorithm_choice, width=5, validate='key')                           .grid(row=2, column=6, sticky="w", padx=2, pady=2)
+        self.minimum_confidence_label                                                                               .grid(row=2, column=5, sticky="w", padx=2, pady=2)
+        tkinter.Entry(frame, textvariable=self.minimum_confidence, width=5, validate='key')                         .grid(row=2, column=6, sticky="w", padx=2, pady=2)
 
         tkinter.Button(frame, text="Generate Dataset", command=self._generate_dataset)                              .grid(row=3, column=0, sticky="w", padx=2, pady=2)
         tkinter.Button(frame, text="Generate Result", command=self._generate_result)                                .grid(row=3, column=4, sticky="w", padx=2, pady=2)
