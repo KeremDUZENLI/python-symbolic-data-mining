@@ -24,9 +24,7 @@ class GUI(tkinter.Tk):
         self.mainloop()
 
 
-    def _generate_dataset(self):
-        self.output.delete('1.0', tkinter.END)
-        
+    def _generate_dataset(self):        
         rows    = self._input_value(self.rows,      "rows")
         columns = self._input_value(self.columns,   "columns")
         density = self._input_value(self.density,   "density")
@@ -50,8 +48,12 @@ class GUI(tkinter.Tk):
         lines = self.output_summary(self.dataset, self.labels, minimum_support, minimum_confidence, algorithm_choice, all_frequent_itemsets)
         self.output.insert(tkinter.END, "\n".join(lines) + "\n")
         self.output.see(tkinter.END)
-        
-        
+
+
+    def _generate_clean_output(self):
+        self.output.delete('1.0', tkinter.END)
+
+
     def _generate_notes(self):
         pdf = self.tk.call('file', 'normalize', 'notes/Notes.pdf')
         system = self.tk.call('tk', 'windowingsystem')
@@ -82,10 +84,11 @@ class GUI(tkinter.Tk):
         return value_int
 
 
-    def _build_gui(self):
-        frame = tkinter.Frame(self)
-        frame.pack(padx=5, pady=5, anchor="w")
+    def _build_gui(self):       
+        frame = tkinter.Frame(self, width=600, height=600)
+        frame.place(x=25, y=25)
         
+        self.geometry("600x600")
         self.title("Symbolic Data Mining")
         self.rows               = tkinter.IntVar(value=self.rules['rows'][0])
         self.columns            = tkinter.IntVar(value=self.rules['columns'][0])
@@ -94,29 +97,33 @@ class GUI(tkinter.Tk):
         self.minimum_confidence = tkinter.IntVar(value=self.rules['minimum_confidence'][0])
         self.algorithm_choice   = tkinter.IntVar(value=self.rules['algorithm_choice'][0])
 
-        tkinter.Label(frame, text=f"Number of Rows ({self.rules['rows'][0]} - {self.rules['rows'][1]})")            .grid(row=0, column=0, sticky="w", padx=2, pady=2)
-        tkinter.Entry(frame, textvariable=self.rows, width=5, validate='key')                                       .grid(row=0, column=1, sticky="w", padx=2, pady=2)
+        tkinter.Label(frame, text=f"Number of Rows ({self.rules['rows'][0]} - {self.rules['rows'][1]})")            .place(x=0, y=0, width=190, height=25)
+        tkinter.Entry(frame, textvariable=self.rows, width=5, validate='key')                                       .place(x=200, y=0, width=50, height=25)
 
-        tkinter.Label(frame, text=f"Number of Columns ({self.rules['columns'][0]} - {self.rules['columns'][1]})")   .grid(row=1, column=0, sticky="w", padx=2, pady=2)
-        tkinter.Entry(frame, textvariable=self.columns, width=5, validate='key')                                    .grid(row=1, column=1, sticky="w", padx=2, pady=2)
+        tkinter.Label(frame, text=f"Number of Columns ({self.rules['columns'][0]} - {self.rules['columns'][1]})")   .place(x=0, y=50, width=190, height=25)
+        tkinter.Entry(frame, textvariable=self.columns, width=5, validate='key')                                    .place(x=200, y=50, width=50, height=25)
 
-        tkinter.Label(frame, text=f"Density ({self.rules['density'][0]} - {self.rules['density'][1]})")             .grid(row=2, column=0, sticky="w", padx=2, pady=2)
-        tkinter.Entry(frame, textvariable=self.density, width=5, validate='key')                                    .grid(row=2, column=1, sticky="w", padx=2, pady=2)
-        
-        tkinter.Label(frame, text=f"1)Apriori  |  2)Apriori-Close\n3)Eclat  |  4)Association_Rule")                 .grid(row=0, column=5, sticky="w", padx=2, pady=2)
-        tkinter.Entry(frame, textvariable=self.algorithm_choice, width=5, validate='key')                           .grid(row=0, column=6, sticky="w", padx=2, pady=2)
-        
+        tkinter.Label(frame, text=f"Density ({self.rules['density'][0]} - {self.rules['density'][1]})")             .place(x=0, y=100, width=190, height=25)
+        tkinter.Entry(frame, textvariable=self.density, width=5, validate='key')                                    .place(x=200, y=100, width=50, height=25)
+
+
+        tkinter.Label(frame, text=f"1)Apriori  |  2)Apriori-Close\n3)Eclat  |  4)Association_Rule")                 .place(x=300, y=0, width=190, height=25)
+        tkinter.Entry(frame, textvariable=self.algorithm_choice, width=5, validate='key')                           .place(x=500, y=0, width=50, height=25)
+
         self.minimum_support_dynamic_label = tkinter.Label(frame, text=f"Minimum Support ({self.rules['minimum_support'][0]} - {self.rules['minimum_support'][1]})")
-        self.minimum_support_dynamic_label                                                                          .grid(row=1, column=5, sticky="w", padx=2, pady=2)
-        tkinter.Entry(frame, textvariable=self.minimum_support, width=5, validate='key')                            .grid(row=1, column=6, sticky="w", padx=2, pady=2)
-        
-        self.minimum_confidence_label = tkinter.Label(frame, text=f"Minimum Confidence ({self.rules['minimum_confidence'][0]} - {self.rules['minimum_confidence'][1]})")
-        self.minimum_confidence_label                                                                               .grid(row=2, column=5, sticky="w", padx=2, pady=2)
-        tkinter.Entry(frame, textvariable=self.minimum_confidence, width=5, validate='key')                         .grid(row=2, column=6, sticky="w", padx=2, pady=2)
+        self.minimum_support_dynamic_label                                                                          .place(x=300, y=50, width=190, height=25)
+        tkinter.Entry(frame, textvariable=self.minimum_support, width=5, validate='key')                            .place(x=500, y=50, width=50, height=25)
 
-        tkinter.Button(frame, text="Generate Dataset", command=self._generate_dataset)                              .grid(row=3, column=0, sticky="w", padx=2, pady=2)
-        tkinter.Button(frame, text="Generate Result", command=self._generate_result)                                .grid(row=3, column=4, sticky="w", padx=2, pady=2)
-        tkinter.Button(frame, text="Show Notes", command=self._generate_notes)                                      .grid(row=3, column=7, sticky="w", padx=2, pady=2)
+        self.minimum_confidence_label = tkinter.Label(frame, text=f"Minimum Confidence ({self.rules['minimum_confidence'][0]} - {self.rules['minimum_confidence'][1]})")
+        self.minimum_confidence_label                                                                               .place(x=300, y=100, width=190, height=25)
+        tkinter.Entry(frame, textvariable=self.minimum_confidence, width=5, validate='key')                         .place(x=500, y=100, width=50, height=25)
+
+
+        tkinter.Button(frame, text="Generate Dataset", command=self._generate_dataset)                              .place(x=0,  y=150, width=250, height=25)
+        tkinter.Button(frame, text="Generate Result", command=self._generate_result)                                .place(x=300, y=150, width=250, height=25)
         
-        self.output = scrolledtext.ScrolledText(self, width=80, height=20)
-        self.output.pack(fill='both', expand=True, padx=5, pady=5)
+        tkinter.Button(frame, text="Clean Output", command=self._generate_clean_output)                             .place(x=75, y=200, width=100, height=25)
+        tkinter.Button(frame, text="Show Notes", command=self._generate_notes)                                      .place(x=375, y=200, width=100, height=25)
+
+        self.output = scrolledtext.ScrolledText(frame)
+        self.output.place(x=0, y=250, width=550, height=300)
