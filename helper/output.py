@@ -23,8 +23,8 @@ def output_summary(dataset, labels, minimum_support, minimum_confidence, algorit
         *( (len(kv[0][0]), len(kv[0][1])) if isinstance(kv[0], tuple) else (len(kv[0]), 0) ),
         *( (sorted(kv[0][0]), sorted(kv[0][1])) if isinstance(kv[0], tuple) else (sorted(kv[0]), []) )))
               
-    for itemset, support in sorted_itemsets:
-        line = _format_entry(itemset, support)
+    for itemset, itemset_values in sorted_itemsets:
+        line = _format_entry(itemset, itemset_values)
         lines.append(line)
     
     lines.append("\n===== SUMMARY =====")
@@ -40,14 +40,18 @@ def output_summary(dataset, labels, minimum_support, minimum_confidence, algorit
     return lines
 
 
-def _format_entry(itemset, support):
+def _format_entry(itemset, itemset_values):
     if isinstance(itemset, tuple):
         A, B = itemset
         AB = ''.join(sorted(A | B))
-        conf, suppAB, suppA = support
+        confidence, support_AB, support_A = itemset_values
         return (
             f"{', '.join(sorted(A))} => {', '.join(sorted(B))} : "
-            f"(confidence({AB})={conf:.2f}% | support({AB})={suppAB} | "
-            f"support({''.join(sorted(B))})={suppA})"
+            f"confidence({AB})={confidence:.2f}% | support({AB})={support_AB} | "
+            f"support({''.join(sorted(B))})={support_A}"
         )
-    return f"{', '.join(sorted(itemset))} : {support}"
+    else:
+        return (
+            f"{', '.join(sorted(itemset))} : "
+            f"support({''.join(sorted(itemset))})={itemset_values}"
+        )
