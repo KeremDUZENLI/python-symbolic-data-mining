@@ -6,6 +6,14 @@ def eclat(dataset, minimum_support):
     return all_frequent_itemsets
 
 
+def _transpose_dataset(dataset):
+    tidsets = {}
+    for tid, transaction in enumerate(dataset):
+        for item in transaction:
+            tidsets.setdefault(frozenset([item]), set()).add(tid)
+    return tidsets
+
+
 def _create_supersets_recursive(prefix, items, minimum_support, frequent_itemsets):
     for i, (itemset_i, tidset_i) in enumerate(items):
         support = len(tidset_i)
@@ -23,11 +31,3 @@ def _create_supersets_recursive(prefix, items, minimum_support, frequent_itemset
 
         if extensions:
             _create_supersets_recursive(new_prefix, extensions, minimum_support, frequent_itemsets)
-
-
-def _transpose_dataset(dataset):
-    tidsets = {}
-    for tid, transaction in enumerate(dataset):
-        for item in transaction:
-            tidsets.setdefault(frozenset([item]), set()).add(tid)
-    return tidsets

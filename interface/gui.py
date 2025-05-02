@@ -20,7 +20,7 @@ class GUI(tkinter.Tk):
         }
         self.rules["minimum_support"] = 1, self.rules["rows"][1]
         self.algorithm_names          = [ self.algorithms[key].__name__ for key in sorted(self.algorithms.keys()) ]
-        self.algorithm_names2keys     = { fn.__name__: k for k, fn in self.algorithms.items() }
+        self.algorithm_names2keys     = { function.__name__: key for key, function in self.algorithms.items() }
         
         self._build_gui()
         self.mainloop()

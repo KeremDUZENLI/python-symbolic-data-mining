@@ -1,10 +1,13 @@
 class CLI():
     def __init__(self, create_dataset, ALGORITHMS, run_algorithm, output_dataset, output_summary):
         self.create_dataset = create_dataset
-        self.run_algorithm = run_algorithm
+        self.algorithms     = ALGORITHMS
+        self.run_algorithm  = run_algorithm
         self.output_dataset = output_dataset
         self.output_summary = output_summary
-        
+               
+        self.algorithm_names = [f"{key}) {function.__name__}" for key, function in sorted(self.algorithms.items())]
+
         self._generate_dataset()
         while True:
             prompt = input("\n[q] Quit  |  [r] Regenerate Dataset  |  [Enter] Run Algorithm  ").strip().lower()
@@ -30,9 +33,9 @@ class CLI():
 
 
     def _generate_result(self):
-        algorithm_choice    = self._input_value("1)Apriori  |  2)Apriori-Close  |  3)Eclat  |  4)Association_Rule", maximum=4)
+        algorithm_choice    = self._input_value("  ".join(self.algorithm_names), maximum=len(self.algorithm_names))
         minimum_support     = self._input_value("Minimum Support", maximum=self.rows)
-        minimum_confidence  = self._input_value("Minimum Confidence", minimum=1, maximum=100) if algorithm_choice == 4 else None
+        minimum_confidence  = self._input_value("Minimum Confidence", minimum=1, maximum=100) if algorithm_choice == 5 else None
         
         all_frequent_itemsets, algorithm_name = self.run_algorithm(self.dataset, algorithm_choice, minimum_support, minimum_confidence)
 

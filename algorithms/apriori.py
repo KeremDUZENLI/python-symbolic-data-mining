@@ -32,20 +32,7 @@ def apriori_rare(dataset, minimum_support):
         itemset_size += 1
         candidate_itemsets = _create_supersets(set(frequent_itemsets.keys()), itemset_size)
 
-    minimal_rare_itemsets = {}
-    for itemset, support in all_rare_itemsets.items():
-        if len(itemset) == 1:
-            minimal_rare_itemsets[itemset] = support
-            continue
-
-        for item in itemset:
-            subset = itemset - {item}
-            if subset in all_rare_itemsets:
-                break
-        else:
-            minimal_rare_itemsets[itemset] = support
-
-    return minimal_rare_itemsets
+    return _find_minimal_rare_itemsets(all_rare_itemsets)
 
 
 def apriori_close(dataset, minimum_support):
@@ -86,6 +73,19 @@ def _find_frequent_itemsets(dataset, prev_itemsets, minimum_support):
             if itemset.issubset(row_set):
                 each_itemset_frequency[itemset] += 1
     return {itemset: freq for itemset, freq in each_itemset_frequency.items() if freq >= minimum_support}
+
+
+def _find_minimal_rare_itemsets(dataset):
+    minimal_rare_itemsets = {}
+    for itemset, count in dataset.items():
+        if len(itemset) == 1:
+            minimal_rare_itemsets[itemset] = count
+            continue
+
+        if all((itemset - {x}) not in dataset for x in itemset):
+            minimal_rare_itemsets[itemset] = count
+
+    return minimal_rare_itemsets
 
 
 def _find_closed_itemsets(dataset):
