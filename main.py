@@ -6,8 +6,8 @@ from helper.dataset  import create_dataset
 from helper.output   import output_dataset, output_summary
 
 
-CLI(create_dataset, ALGORITHMS, run_algorithm, output_dataset, output_summary)
-# GUI(create_dataset, ALGORITHMS, run_algorithm, output_dataset, output_summary)
+# CLI(create_dataset, ALGORITHMS, run_algorithm, output_dataset, output_summary)
+GUI(create_dataset, ALGORITHMS, run_algorithm, output_dataset, output_summary)
 
 
 # <./core02_assrulex.sh sample/laszlo.rcf 3 50% -alg:apriori -rule:all --names>

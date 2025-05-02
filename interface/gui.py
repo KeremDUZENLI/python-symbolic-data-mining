@@ -59,9 +59,12 @@ class GUI(tkinter.Tk):
         button_generate_clean_output  = tkinter.Button(frame, text="Clean Output",     command=self._clean_output)                                                         
         button_generate_notes         = tkinter.Button(frame, text="Show Notes",       command=self._show_notes)     
         
+        self.output                   = scrolledtext.ScrolledText(frame, wrap=tkinter.NONE)
+        x_scroll                      = tkinter.Scrollbar(frame, orient='horizontal', command=self.output.xview)
+        self.output.config(xscrollcommand=x_scroll.set)
+        
         self.algorithm_choice.trace_add("write", self._toggle_entry)
         self._toggle_entry()
-        self.output                   = scrolledtext.ScrolledText(frame)
 
         label_rows                    .place(x=0,    y=0,    width=190, height=25)
         label_columns                 .place(x=0,    y=50,   width=190, height=25)
@@ -82,6 +85,7 @@ class GUI(tkinter.Tk):
         button_generate_clean_output  .place(x=75,   y=200,  width=100, height=25)
         button_generate_notes         .place(x=375,  y=200,  width=100, height=25)
 
+        x_scroll                      .place(x=0,    y=550,  width=550)
         self.output                   .place(x=0,    y=250,  width=550, height=300)
 
 
