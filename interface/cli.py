@@ -7,7 +7,15 @@ class CLI():
         
         self._generate_dataset()
         while True:
-            self._generate_result()
+            prompt = input("\n[q] Quit  |  [r] Regenerate Dataset  |  [Enter] Run Algorithm  ").strip().lower()
+            print()
+                   
+            if prompt == 'q':
+                break
+            elif prompt == 'r':
+                self._generate_dataset()
+            else:
+                self._generate_result()
 
 
     def _generate_dataset(self):
@@ -22,7 +30,7 @@ class CLI():
 
 
     def _generate_result(self):
-        algorithm_choice    = self._input_value("1)Apriori  |  2)Apriori-Close\n3)Eclat  |  4)Association_Rule", maximum=4)
+        algorithm_choice    = self._input_value("1)Apriori  |  2)Apriori-Close  |  3)Eclat  |  4)Association_Rule", maximum=4)
         minimum_support     = self._input_value("Minimum Support", maximum=self.rows)
         minimum_confidence  = self._input_value("Minimum Confidence", minimum=1, maximum=100) if algorithm_choice == 4 else None
         
