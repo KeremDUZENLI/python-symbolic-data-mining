@@ -1,4 +1,4 @@
-from algorithms.apriori import apriori, apriori_close, association_rule
+from algorithms.apriori import apriori, apriori_rare, apriori_close, association_rule
 from algorithms.eclat   import eclat
 import unittest
 
@@ -15,7 +15,7 @@ class TestFrequentItemsetAlgorithms(unittest.TestCase):
         self.minimum_support = 3
         self.minimum_confidence = 50
 
-        self.expected_frequent_itemsets = {
+        self.expected_apriori = {
             frozenset({'a'}): 4,
             frozenset({'b'}): 4,
             frozenset({'c'}): 4,
@@ -29,8 +29,14 @@ class TestFrequentItemsetAlgorithms(unittest.TestCase):
             frozenset({'a','b','e'}): 3,
             frozenset({'b','c','e'}): 3,
         }
+        
+        self.expected_apriori_rare = {
+            frozenset({'d'}): 1,
+            frozenset({'a', 'b', 'c'}): 2,
+            frozenset({'a', 'c', 'e'}): 2,
+        }
 
-        self.expected_closed_itemsets = {
+        self.expected_apriori_close = {
             frozenset({'a'}): 4,
             frozenset({'c'}): 4,
             frozenset({'a','c'}): 3,
@@ -39,8 +45,7 @@ class TestFrequentItemsetAlgorithms(unittest.TestCase):
             frozenset({'b','c','e'}): 3,
         }
         
-        
-        self.expected_association_rules = {
+        self.expected_association_rule = {
             (frozenset({'a'}), frozenset({'b'})): (0.75, 3, 4), 
             (frozenset({'a'}), frozenset({'c'})): (0.75, 3, 4), 
             (frozenset({'a'}), frozenset({'e'})): (0.75, 3, 4),
@@ -72,19 +77,23 @@ class TestFrequentItemsetAlgorithms(unittest.TestCase):
 
     def test_apriori(self):
         all_frequent_itemsets = apriori(self.dataset, self.minimum_support)
-        self.assertDictEqual(all_frequent_itemsets, self.expected_frequent_itemsets)
+        self.assertDictEqual(all_frequent_itemsets, self.expected_apriori)
+        
+    def test_apriori_rare(self):
+        all_closed_itemsets = apriori_rare(self.dataset, self.minimum_support)
+        self.assertDictEqual(all_closed_itemsets, self.expected_apriori_rare)
 
     def test_apriori_closed(self):
         all_closed_itemsets = apriori_close(self.dataset, self.minimum_support)
-        self.assertDictEqual(all_closed_itemsets, self.expected_closed_itemsets)
+        self.assertDictEqual(all_closed_itemsets, self.expected_apriori_close)
         
     def test_eclat(self):
         all_frequent_itemsets = eclat(self.dataset, self.minimum_support)
-        self.assertDictEqual(all_frequent_itemsets, self.expected_frequent_itemsets)
+        self.assertDictEqual(all_frequent_itemsets, self.expected_apriori)
         
     def test_association_rule(self):
         all_frequent_itemsets = association_rule(self.dataset, self.minimum_support, self.minimum_confidence)
-        self.assertDictEqual(all_frequent_itemsets, self.expected_association_rules)
+        self.assertDictEqual(all_frequent_itemsets, self.expected_association_rule)
 
 
 if __name__ == "__main__":
