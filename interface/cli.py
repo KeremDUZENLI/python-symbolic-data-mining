@@ -6,7 +6,8 @@ class CLI():
         self.output_summary = output_summary
         
         self._generate_dataset()
-        self._generate_result()
+        while True:
+            self._generate_result()
 
 
     def _generate_dataset(self):
@@ -23,7 +24,7 @@ class CLI():
     def _generate_result(self):
         algorithm_choice    = self._input_value("1)Apriori  |  2)Apriori-Close\n3)Eclat  |  4)Association_Rule", maximum=4)
         minimum_support     = self._input_value("Minimum Support", maximum=self.rows)
-        minimum_confidence  = self._input_value("Minimum Confidence", maximum=100)
+        minimum_confidence  = self._input_value("Minimum Confidence", minimum=1, maximum=100) if algorithm_choice == 4 else None
         
         all_frequent_itemsets, algorithm_name = self.run_algorithm(self.dataset, algorithm_choice, minimum_support, minimum_confidence)
 
@@ -34,7 +35,13 @@ class CLI():
     def _input_value(self, message, minimum=1, maximum=None):
         range = f"({minimum} - {maximum})"  
         while True:
-            value = int(input(f"{message} {range}: ").strip())
+            
+            try:
+                value = int(input(f"{message} {range}: ").strip())
+            except ValueError: 
+                print("❌ ONLY INTEGER VALUE ❌")
+                continue
+            
             if (minimum is not None and value < minimum) or (maximum is not None and value > maximum):
                 print(f"❌ NOT VALID RANGE ❌")
             else:

@@ -107,6 +107,7 @@ class GUI(tkinter.Tk):
         algorithm_choice    = self.algorithm_names2keys[self.algorithm_choice.get()]
         minimum_support     = self._input_value(self.minimum_support,    "minimum_support")
         minimum_confidence  = self._input_value(self.minimum_confidence, "minimum_confidence")
+        minimum_confidence  = self._input_value(self.minimum_confidence, "minimum_confidence") if self.algorithm_choice.get() == "association_rule" else None
         
         all_frequent_itemsets, algorithm_name = self.run_algorithm(self.dataset, algorithm_choice, minimum_support, minimum_confidence)
         
