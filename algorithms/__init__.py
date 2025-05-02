@@ -10,7 +10,7 @@ ALGORITHMS = {
 }
 
 
-def run_algorithm(dataset, minimum_support, minimum_confidence, algorithm_choice):
+def run_algorithm(dataset, algorithm_choice, minimum_support, minimum_confidence):
     algorithm = ALGORITHMS.get(algorithm_choice)
     
     if algorithm_choice == 1:

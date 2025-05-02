@@ -3,21 +3,24 @@ from tkinter import scrolledtext
 
 
 class GUI(tkinter.Tk):    
-    def __init__(self, create_dataset, run_algorithm, output_dataset, output_summary):       
+    def __init__(self, create_dataset, ALGORITHMS, run_algorithm, output_dataset, output_summary):       
         self.create_dataset = create_dataset
+        self.algorithms     = ALGORITHMS
         self.run_algorithm  = run_algorithm
         self.output_dataset = output_dataset
         self.output_summary = output_summary
         super().__init__()
+        
 
         self.rules = {
             "rows"               : (5, 10),
             "columns"            : (5, 10),
             "density"            : (50, 100),
-            "algorithm_choice"   : (1, 4),
+          # "algorithm_choice"   : (1, 4),
             "minimum_support"    : None,
             "minimum_confidence" : (1, 100),
         }
+        self.algorithm_names = [ self.algorithms[key].__name__ for key in sorted(self.algorithms.keys()) ]
         self.rules["minimum_support"] = 1, self.rules["rows"][1]
         
         self._build_gui()
@@ -39,11 +42,11 @@ class GUI(tkinter.Tk):
 
 
     def _generate_result(self):
-        algorithm_choice    = self._input_value(self.algorithm_choice,   "algorithm_choice")
+        algorithm_choice    = next(key for key, func in self.algorithms.items() if func.__name__ == self.algorithm_choice.get())
         minimum_support     = self._input_value(self.minimum_support,    "minimum_support")
         minimum_confidence  = self._input_value(self.minimum_confidence, "minimum_confidence")
         
-        all_frequent_itemsets, algorithm_name = self.run_algorithm(self.dataset, minimum_support, minimum_confidence, algorithm_choice)
+        all_frequent_itemsets, algorithm_name = self.run_algorithm(self.dataset, algorithm_choice, minimum_support, minimum_confidence)
         
         lines = self.output_summary(self.dataset, self.labels, minimum_support, minimum_confidence, algorithm_name, all_frequent_itemsets)
         self.output.insert(tkinter.END, "\n".join(lines) + "\n")
@@ -94,21 +97,22 @@ class GUI(tkinter.Tk):
         self.rows                     = tkinter.IntVar(value=self.rules['rows'][0])
         self.columns                  = tkinter.IntVar(value=self.rules['columns'][0])
         self.density                  = tkinter.IntVar(value=self.rules['density'][0])
-        self.algorithm_choice         = tkinter.IntVar(value=self.rules['algorithm_choice'][0])
+        self.algorithm_choice         = tkinter.StringVar(value=self.algorithm_names[0])
         self.minimum_support          = tkinter.IntVar(value=self.rules['minimum_support'][0])
         self.minimum_confidence       = tkinter.IntVar(value=self.rules['minimum_confidence'][0])
-
+        
+        
         label_rows                    = tkinter.Label(frame, text=f"Number of Rows ({self.rules['rows'][0]} - {self.rules['rows'][1]})", anchor='w', justify='left')            
         label_columns                 = tkinter.Label(frame, text=f"Number of Columns ({self.rules['columns'][0]} - {self.rules['columns'][1]})", anchor='w', justify='left')
         label_density                 = tkinter.Label(frame, text=f"Density ({self.rules['density'][0]} - {self.rules['density'][1]})", anchor='w', justify='left')             
-        label_algorithm_choice        = tkinter.Label(frame, text=f"1)Apriori  |  2)Apriori-Close\n3)Eclat  |  4)Association_Rule", anchor='w', justify='left')        
+        label_algorithm_choice        = tkinter.Label(frame, text=f"Algorithm", anchor='w', justify='left')        
         self.label_minimum_support    = tkinter.Label(frame, text=f"Minimum Support ({self.rules['minimum_support'][0]} - {self.rules['minimum_support'][1]})", anchor='w', justify='left')
         label_minimum_confidence      = tkinter.Label(frame, text=f"Minimum Confidence ({self.rules['minimum_confidence'][0]} - {self.rules['minimum_confidence'][1]})", anchor='w', justify='left')
                  
         entry_rows                    = tkinter.Entry(frame, textvariable=self.rows,               validate='key')                                                                            
         entry_columns                 = tkinter.Entry(frame, textvariable=self.columns,            validate='key')
-        entry_density                 = tkinter.Entry(frame, textvariable=self.density,            validate='key')                                                                        
-        entry_algorithm_choice        = tkinter.Entry(frame, textvariable=self.algorithm_choice,   validate='key')                                                                
+        entry_density                 = tkinter.Entry(frame, textvariable=self.density,            validate='key')                                                             
+        entry_algorithm_choice        = tkinter.OptionMenu(frame, self.algorithm_choice, *self.algorithm_names)
         entry_minimum_support         = tkinter.Entry(frame, textvariable=self.minimum_support,    validate='key')                                                                 
         entry_minimum_confidence      = tkinter.Entry(frame, textvariable=self.minimum_confidence, validate='key')    
         
@@ -122,14 +126,14 @@ class GUI(tkinter.Tk):
         label_rows                    .place(x=0,    y=0,    width=190, height=25)
         label_columns                 .place(x=0,    y=50,   width=190, height=25)
         label_density                 .place(x=0,    y=100,  width=190, height=25)
-        label_algorithm_choice        .place(x=300,  y=0,    width=190, height=25)
+        label_algorithm_choice        .place(x=300,  y=0,    width=90,  height=25)
         self.label_minimum_support    .place(x=300,  y=50,   width=190, height=25)
         label_minimum_confidence      .place(x=300,  y=100,  width=190, height=25)
         
         entry_rows                    .place(x=200,  y=0,    width=50,  height=25)
         entry_columns                 .place(x=200,  y=50,   width=50,  height=25)
         entry_density                 .place(x=200,  y=100,  width=50,  height=25)
-        entry_algorithm_choice        .place(x=500,  y=0,    width=50,  height=25)
+        entry_algorithm_choice        .place(x=400,  y=0,    width=150, height=25)
         entry_minimum_support         .place(x=500,  y=50,   width=50,  height=25)
         entry_minimum_confidence      .place(x=500,  y=100,  width=50,  height=25)
                                    

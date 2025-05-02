@@ -1,5 +1,5 @@
 class CLI():
-    def __init__(self, create_dataset, run_algorithm, output_dataset, output_summary):
+    def __init__(self, create_dataset, ALGORITHMS, run_algorithm, output_dataset, output_summary):
         self.create_dataset = create_dataset
         self.run_algorithm = run_algorithm
         self.output_dataset = output_dataset
@@ -25,7 +25,7 @@ class CLI():
         minimum_support     = self._input_value("Minimum Support", maximum=self.rows)
         minimum_confidence  = self._input_value("Minimum Confidence", maximum=100)
         
-        all_frequent_itemsets, algorithm_name = self.run_algorithm(self.dataset, minimum_support, minimum_confidence, algorithm_choice)
+        all_frequent_itemsets, algorithm_name = self.run_algorithm(self.dataset, algorithm_choice, minimum_support, minimum_confidence)
 
         lines = self.output_summary(self.dataset, self.labels, minimum_support, minimum_confidence, algorithm_name, all_frequent_itemsets)
         print(*lines, sep='\n')
