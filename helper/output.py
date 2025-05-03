@@ -20,9 +20,26 @@ def output_summary(dataset, labels, minimum_support, minimum_confidence, algorit
     
     lines.append('\n===== ITEMSETS =====')      
     sorted_itemsets = sorted(all_frequent_itemsets.items(), key=_sort_itemsets)
-    for itemset, itemset_values in sorted_itemsets:
-        line = _format_sorted_itemsets(itemset, itemset_values)
-        lines.append(line)
+    
+    raw_lines = [ _format_sorted_itemsets(itemset, itemset_values) for itemset, itemset_values in sorted_itemsets ]
+    columns = list(zip(*raw_lines))
+    maximum_widths = [max(len(item) for item in column) for column in columns]
+    
+    for line in raw_lines:
+        if len(line) == 4:
+            column_association, column_confidence, column_support_AB, column_support_A = line
+            lines.append(
+                f"{column_association:<{maximum_widths[0]}} : "
+                f"{column_confidence:<{maximum_widths[1]}} | "
+                f"{column_support_AB:<{maximum_widths[2]}} | "
+                f"{column_support_A:<{maximum_widths[3]}}"
+            )   
+        else:
+            column_association, column_support_A = line
+            lines.append(
+                f"{column_association:<{maximum_widths[0]}} : "
+                f"{column_support_A}"
+            )
     
     lines.append("\n===== SUMMARY =====")
     lines.append(f"Total number of rows    : {len(dataset)}")
@@ -59,10 +76,10 @@ def _format_sorted_itemsets(itemset, itemset_values):
         column_support_AB  = f"support({sorted_AB})={support_AB}"
         column_support_A   = f"support({sorted_A})={support_A}"
         return (
-            f"{column_association:<15} : "
-            f"{column_confidence:<30} | "
-            f"{column_support_AB:<20} | "
-            f"{column_support_A}"
+            column_association,
+            column_confidence,
+            column_support_AB,
+            column_support_A,
         )
     else:   
         sorted_A  = ', '.join(sorted(itemset))
@@ -71,6 +88,6 @@ def _format_sorted_itemsets(itemset, itemset_values):
         column_association = f"{sorted_A}"
         column_support_A   = f"support({sorted_A})={support_A}"
         return(
-            f"{column_association:<15} : "
-            f"{column_support_A}"
+            column_association,
+            column_support_A,
         )
