@@ -16,7 +16,7 @@ def output_dataset(dataset, labels):
 
 
 def output_summary(dataset, labels, minimum_support, minimum_confidence, algorithm_choice, all_frequent_itemsets):
-    lines     = []
+    lines = []
     
     lines.append('\n===== ITEMSETS =====')      
     sorted_itemsets = sorted(all_frequent_itemsets.items(), key=_sort_itemsets)

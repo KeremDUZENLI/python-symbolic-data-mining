@@ -1,6 +1,18 @@
 import random
 
 
+def create_dataset_default():
+    dataset = [
+        ['a','b','d','e'],
+        ['a','c'],
+        ['a','b','c','e'],
+        ['b','c','e'],
+        ['a','b','c','e']
+    ]
+    labels = sorted({item for rows in dataset for item in rows})
+    return dataset, labels
+
+
 def create_dataset(rows, columns, density):
     def col_label(i):
         label = ""

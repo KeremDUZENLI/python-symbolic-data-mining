@@ -1,16 +1,17 @@
 class CLI():
-    def __init__(self, create_dataset, ALGORITHMS, run_algorithm, output_dataset, output_summary):
+    def __init__(self, create_dataset_default, create_dataset, ALGORITHMS, run_algorithm, output_dataset, output_summary):
         self.create_dataset = create_dataset
         self.algorithms     = ALGORITHMS
         self.run_algorithm  = run_algorithm
         self.output_dataset = output_dataset
         self.output_summary = output_summary
-               
+        
+        self.create_dataset_default = create_dataset_default
         self.algorithm_names = [f"{key}) {function.__name__}" for key, function in sorted(self.algorithms.items())]
 
-        self._generate_dataset()
+        self._generate_dataset_default()
         while True:
-            prompt = input("\n[q] Quit  |  [r] Regenerate Dataset  |  [Enter] Run Algorithm  ").strip().lower()
+            prompt = input("\n[q] Quit  |  [r] Generate Dataset  |  [Enter] Run Algorithm  ").strip().lower()
             print()
                    
             if prompt == 'q':
@@ -27,6 +28,15 @@ class CLI():
         density     = self._input_value("Density", maximum=100)
         
         self.dataset, self.labels = self.create_dataset(self.rows, columns, density)
+        
+        lines = self.output_dataset(self.dataset, self.labels)
+        print(*lines, sep='\n')
+
+
+    def _generate_dataset_default(self):
+        self.dataset, self.labels = self.create_dataset_default()
+    
+        self.rows    = len(self.dataset)
         
         lines = self.output_dataset(self.dataset, self.labels)
         print(*lines, sep='\n')
