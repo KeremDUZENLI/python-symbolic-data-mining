@@ -22,21 +22,21 @@ class CLI():
                 self._generate_result()
 
 
+    def _generate_dataset_default(self):
+        self.dataset, self.labels = self.create_dataset_default()
+    
+        self.rows    = len(self.dataset)
+        
+        lines = self.output_dataset(self.dataset, self.labels)
+        print(*lines, sep='\n')
+
+
     def _generate_dataset(self):
         self.rows   = self._input_value("Number of Rows", maximum=10)
         columns     = self._input_value("Number of Columns", maximum=10)
         density     = self._input_value("Density", maximum=100)
         
         self.dataset, self.labels = self.create_dataset(self.rows, columns, density)
-        
-        lines = self.output_dataset(self.dataset, self.labels)
-        print(*lines, sep='\n')
-
-
-    def _generate_dataset_default(self):
-        self.dataset, self.labels = self.create_dataset_default()
-    
-        self.rows    = len(self.dataset)
         
         lines = self.output_dataset(self.dataset, self.labels)
         print(*lines, sep='\n')

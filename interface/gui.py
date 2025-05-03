@@ -3,7 +3,7 @@ from tkinter import scrolledtext
 
 
 class GUI(tkinter.Tk):    
-    def __init__(self, create_dataset, ALGORITHMS, run_algorithm, output_dataset, output_summary):       
+    def __init__(self, create_dataset_default, create_dataset, ALGORITHMS, run_algorithm, output_dataset, output_summary):       
         self.create_dataset = create_dataset
         self.algorithms     = ALGORITHMS
         self.run_algorithm  = run_algorithm
@@ -19,10 +19,13 @@ class GUI(tkinter.Tk):
             "minimum_confidence" : (1, 100),
         }
         self.rules["minimum_support"] = 1, self.rules["rows"][1]
+        
+        self.create_dataset_default   = create_dataset_default
         self.algorithm_names          = [ self.algorithms[key].__name__ for key in sorted(self.algorithms.keys()) ]
         self.algorithm_names2keys     = { function.__name__: key for key, function in self.algorithms.items() }
         
         self._build_gui()
+        self._generate_dataset_default()
         self.mainloop()
 
 
@@ -54,10 +57,11 @@ class GUI(tkinter.Tk):
         entry_minimum_support         = tkinter.Entry(frame, textvariable=self.minimum_support,    validate='key')                                                                 
         self.entry_minimum_confidence = tkinter.Entry(frame, textvariable=self.minimum_confidence, validate='key')
         
-        button_generate_dataset       = tkinter.Button(frame, text="Generate Dataset", command=self._generate_dataset)                                                          
-        button_generate_result        = tkinter.Button(frame, text="Generate Result",  command=self._generate_result)                                                              
-        button_generate_clean_output  = tkinter.Button(frame, text="Clean Output",     command=self._clean_output)                                                         
-        button_generate_notes         = tkinter.Button(frame, text="Show Notes",       command=self._show_notes)     
+        button_generate_dataset       = tkinter.Button(frame, text="Generate Dataset", command=self._generate_dataset)
+        button_generate_result        = tkinter.Button(frame, text="Generate Result",  command=self._generate_result)
+        button_generate_dataset_def   = tkinter.Button(frame, text="Laszlo.rcf",       command=self._generate_dataset_default)
+        button_generate_clean_output  = tkinter.Button(frame, text="Clean Output",     command=self._clean_output)
+        button_generate_notes         = tkinter.Button(frame, text="Show Notes",       command=self._show_notes)
         
         self.output                   = scrolledtext.ScrolledText(frame, wrap=tkinter.NONE)
         x_scroll                      = tkinter.Scrollbar(frame, orient='horizontal', command=self.output.xview)
@@ -72,18 +76,19 @@ class GUI(tkinter.Tk):
         label_algorithm_choice        .place(x=300,  y=0,    width=90,  height=25)
         self.label_minimum_support    .place(x=300,  y=50,   width=190, height=25)
         label_minimum_confidence      .place(x=300,  y=100,  width=190, height=25)
-        
+
         entry_rows                    .place(x=200,  y=0,    width=50,  height=25)
         entry_columns                 .place(x=200,  y=50,   width=50,  height=25)
         entry_density                 .place(x=200,  y=100,  width=50,  height=25)
         entry_algorithm_choice        .place(x=400,  y=0,    width=150, height=25)
         entry_minimum_support         .place(x=500,  y=50,   width=50,  height=25)
         self.entry_minimum_confidence .place(x=500,  y=100,  width=50,  height=25)
-        
-        button_generate_dataset       .place(x=0,    y=150,  width=250, height=25)
-        button_generate_result        .place(x=300,  y=150,  width=250, height=25)
-        button_generate_clean_output  .place(x=75,   y=200,  width=100, height=25)
-        button_generate_notes         .place(x=375,  y=200,  width=100, height=25)
+
+        button_generate_dataset_def   .place(x=0,    y=150,  width=250, height=25)
+        button_generate_clean_output  .place(x=300,  y=150,  width=110, height=25)
+        button_generate_notes         .place(x=440,  y=150,  width=110, height=25)
+        button_generate_dataset       .place(x=0,    y=200,  width=250, height=25)
+        button_generate_result        .place(x=300,  y=200,  width=250, height=25)
 
         x_scroll                      .place(x=0,    y=550,  width=550)
         self.output                   .place(x=0,    y=250,  width=550, height=300)
@@ -91,6 +96,16 @@ class GUI(tkinter.Tk):
 
     def _toggle_entry(self, *args):
         self.entry_minimum_confidence.config(state="normal" if self.algorithm_choice.get() == "association_rule" else "disabled")
+
+
+    def _generate_dataset_default(self):
+        self.dataset, self.labels = self.create_dataset_default()
+    
+        self.rows.set(len(self.dataset))
+        
+        lines = self.output_dataset(self.dataset, self.labels)
+        self.output.insert(tkinter.END, "\n".join(lines) + "\n")
+        self.output.see(tkinter.END)
 
 
     def _generate_dataset(self):        
@@ -118,7 +133,7 @@ class GUI(tkinter.Tk):
         lines = self.output_summary(self.dataset, self.labels, minimum_support, minimum_confidence, algorithm_name, all_frequent_itemsets)
         self.output.insert(tkinter.END, "\n".join(lines) + "\n")
         self.output.see(tkinter.END)
-        
+
 
     def _input_value(self, value, label_name):      
         minimum, maximum = self.rules.get(label_name, (None, None))
