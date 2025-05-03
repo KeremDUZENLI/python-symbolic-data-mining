@@ -18,22 +18,11 @@ def output_dataset(dataset, labels):
 def output_summary(dataset, labels, minimum_support, minimum_confidence, algorithm_choice, all_frequent_itemsets):
     lines     = []
     
-    lines.append("\n===== ITEMSETS =====")
-    info_list = [_extract_itemset_info(itemset, vals) for itemset, vals in sorted(all_frequent_itemsets.items(), key=_sort_itemsets)]
-    max_width = max((len(info["group"]) for info in info_list), default=0)
-
-    for info in info_list:
-        label = info["group"].ljust(max_width)
-        if "support" in info:
-            key = info["group"].replace(", ", "")
-            lines.append(f"{label} : support({key}) = {info['support']}")
-        else:
-            lines.append(
-                f"{label} : "
-                f"(confidence({info['AB']}) = {info['confidence']:.2%} | "
-                f"support({info['AB']}) = {info['support_AB']} | "
-                f"support({''.join(info['group'].split(', ')[:-1])}) = {info['support_A']})"
-            )
+    lines.append('\n===== ITEMSETS =====')      
+    sorted_itemsets = sorted(all_frequent_itemsets.items(), key=_sort_itemsets)
+    for itemset, itemset_values in sorted_itemsets:
+        line = _format_sorted_itemsets(itemset, itemset_values)
+        lines.append(line)
     
     lines.append("\n===== SUMMARY =====")
     lines.append(f"Total number of rows    : {len(dataset)}")
@@ -57,23 +46,31 @@ def _sort_itemsets(key_and_value):
         return (len(itemset), 0, sorted(itemset), [])
 
 
-def _extract_itemset_info(itemset, itemset_values):
+def _format_sorted_itemsets(itemset, itemset_values):
     if isinstance(itemset, tuple):
-        A, B  = itemset
-        group = f"{', '.join(sorted(A))} => {', '.join(sorted(B))}"
-        AB    = ''.join(sorted(A) + sorted(B))
-        confidence, support_AB, support_A = itemset_values
-        return {
-            "group"      : group,
-            "AB"         : AB,
-            "confidence" : confidence,
-            "support_AB" : support_AB,
-            "support_A"  : support_A,
-        }
-    else:
-        group   = ", ".join(sorted(itemset))
-        support = itemset_values
-        return {
-            "group"   : group,
-            "support" : support
-        }
+        A, B      = itemset
+        sorted_A  = ', '.join(sorted(A))
+        sorted_B  = ', '.join(sorted(B))
+        sorted_AB = ''.join(sorted_A + sorted_B)
+        confidence_AB, support_AB, support_A = itemset_values
+
+        column_association = f"{sorted_A} => {sorted_B}"
+        column_confidence  = f"confidence({sorted_AB})={confidence_AB:.2%}"
+        column_support_AB  = f"support({sorted_AB})={support_AB}"
+        column_support_A   = f"support({sorted_A})={support_A}"
+        return (
+            f"{column_association:<15} : "
+            f"{column_confidence:<30} | "
+            f"{column_support_AB:<20} | "
+            f"{column_support_A}"
+        )
+    else:   
+        sorted_A  = ', '.join(sorted(itemset))
+        support_A = itemset_values
+        
+        column_association = f"{sorted_A}"
+        column_support_A   = f"support({sorted_A})={support_A}"
+        return(
+            f"{column_association:<15} : "
+            f"{column_support_A}"
+        )
