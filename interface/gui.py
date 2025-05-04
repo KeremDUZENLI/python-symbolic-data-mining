@@ -13,11 +13,11 @@ class GUI(tkinter.Tk):
         self.output_summary           = output_summary
 
         self.rules = {
-            "rows"               : (5, 10),
-            "columns"            : (5, 10),
-            "density"            : (50, 100),
+            "rows"               : (1, 10),
+            "columns"            : (1, 10),
+            "density"            : (0, 100),
             "minimum_support"    : None,
-            "minimum_confidence" : (1, 100),
+            "minimum_confidence" : (0, 100),
         }
         self.rules["minimum_support"] = 1, self.rules["rows"][1]
         
@@ -37,12 +37,12 @@ class GUI(tkinter.Tk):
         self.geometry("600x600")
         self.title("Symbolic Data Mining")
 
-        self.rows                     = tkinter.IntVar(value=self.rules['rows'][0])
-        self.columns                  = tkinter.IntVar(value=self.rules['columns'][0])
-        self.density                  = tkinter.IntVar(value=self.rules['density'][0])
+        self.rows                     = tkinter.IntVar(value=5)
+        self.columns                  = tkinter.IntVar(value=5)
+        self.density                  = tkinter.IntVar(value=50)
         self.algorithm_choice         = tkinter.StringVar(value=self.algorithm_names[0])
-        self.minimum_support          = tkinter.IntVar(value=self.rules['minimum_support'][0])
-        self.minimum_confidence       = tkinter.IntVar(value=self.rules['minimum_confidence'][0])
+        self.minimum_support          = tkinter.IntVar(value=3)
+        self.minimum_confidence       = tkinter.IntVar(value=50)
         
         label_rows                    = tkinter.Label(frame, text=f"Number of Rows ({self.rules['rows'][0]} - {self.rules['rows'][1]})", anchor='w', justify='left')            
         label_columns                 = tkinter.Label(frame, text=f"Number of Columns ({self.rules['columns'][0]} - {self.rules['columns'][1]})", anchor='w', justify='left')
@@ -122,29 +122,49 @@ class GUI(tkinter.Tk):
         self.output.see(tkinter.END)
         
         self.label_minimum_support.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {len(self.dataset)})")
-        
-        
+
+
     def _draw_dataset(self):
         rows    = self._input_value(self.rows,      "rows")
         columns = self._input_value(self.columns,   "columns")
-        
         size    = 50
 
+        header_height = size * 0.5
+        header_width  = size * 0.5
+        canvas_height = header_height + rows    * size
+        canvas_width  = header_width  + columns * size
+        
         self._window = tkinter.Toplevel(self)
-        self._canvas = tkinter.Canvas(self._window, height=rows*size, width=columns*size, bg="white")
+        self._canvas = tkinter.Canvas(self._window, height=canvas_height, width=canvas_width, bg="white")
         self._canvas.pack()
 
-        self._grid_data       = [[False]*columns for _ in range(rows)]
-        self._cell_rectangles = {}
+
+        from helper.dataset import _create_column_labels
+        labels = [_create_column_labels(i) for i in range(columns)]
+
+        for cell, label in enumerate(labels):
+            position_x = header_width + cell*size + size/2
+            position_y = header_height/2
+            self._canvas.create_text(position_x, position_y, text=label, anchor="center")
 
         for row in range(rows):
-            for column in range(columns):
-                x0, y0 = column*size, row*size
-                x1, y1 = x0+size    , y0+size
-                canvas = self._canvas.create_rectangle(x0, y0, x1, y1, fill="white", outline="black")
-                
-                self._cell_rectangles[(row,column)] = canvas
-                self._canvas.tag_bind(canvas, "<Button-1>", lambda e, r=row, c=column: self._toggle_cell(r, c))
+            position_x = header_width/2
+            position_y = header_height + row*size + size/2
+            self._canvas.create_text(position_x, position_y, text=str(row+1), anchor="center")
+
+        self._grid_data       = [[False]*columns for _ in range(rows)]
+        self._cell_rectangles = {}        
+        
+        for r in range(rows):
+            for c in range(columns):
+                x0 = header_width + c*size
+                y0 = header_height + r*size
+                x1 = x0 + size
+                y1 = y0 + size
+
+                rect_id = self._canvas.create_rectangle(x0, y0, x1, y1, fill="white", outline="black")
+                self._cell_rectangles[(r,c)] = rect_id
+                self._canvas.tag_bind(rect_id, "<Button-1>", lambda e, r=r, c=c: self._toggle_cell(r, c))
 
         tkinter.Button(self._window, text="Done", command=self._dataset_from_grid).pack(pady=5)
 
@@ -157,12 +177,19 @@ class GUI(tkinter.Tk):
 
     def _dataset_from_grid(self):
         self.dataset, self.labels = self.create_dataset_from_grid(self._grid_data)
+        
 
         lines = self.output_dataset(self.dataset, self.labels)
         self.output.insert(tkinter.END, "\n".join(lines) + "\n")
         self.output.see(tkinter.END)
 
         self.label_minimum_support.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {len(self._grid_data)})")
+        
+        filled_cells = sum(1 for row in self._grid_data for filled in row if filled)
+        total_cells  = len(self._grid_data) * (len(self._grid_data[0]) if self._grid_data else 0)
+        new_density  = int((filled_cells / total_cells) * 100) if total_cells else 0
+        self.density.set(new_density)
+        
         self._window.destroy()
 
 
@@ -185,7 +212,7 @@ class GUI(tkinter.Tk):
 
     def _generate_result(self):
         if self.dataset is None:
-            self.output.insert(tkinter.END, ("⚠️\tDATASET NOT DEFINED\t⚠️") + "\n")
+            self.output.insert(tkinter.END, ("⚠️ DATASET NOT DEFINED ⚠️") + "\n")
             self.output.see(tkinter.END)
             return
 
