@@ -1,6 +1,8 @@
 import tkinter
 from tkinter import scrolledtext
 
+from helper.dataset import create_dataset_from_grid
+
 
 class GUI(tkinter.Tk):    
     def __init__(self, create_dataset_default, create_dataset, ALGORITHMS, run_algorithm, output_dataset, output_summary):       
@@ -57,10 +59,10 @@ class GUI(tkinter.Tk):
         self.entry_minimum_confidence = tkinter.Entry(frame, textvariable=self.minimum_confidence, validate='key')
         
         button_dataset_default        = tkinter.Button(frame, text="Laszlo.rcf",       command=self._dataset_default)
+        button_generate_dataset       = tkinter.Button(frame, text="Generate Dataset", command=self._generate_dataset)
         button_draw_dataset           = tkinter.Button(frame, text="Draw Dataset",     command=self._draw_dataset)
         button_clean_output           = tkinter.Button(frame, text="Clean Output",     command=self._clean_output)
         button_show_notes             = tkinter.Button(frame, text="Show Notes",       command=self._show_notes)
-        button_generate_dataset       = tkinter.Button(frame, text="Generate Dataset", command=self._generate_dataset)
         button_generate_result        = tkinter.Button(frame, text="Generate Result",  command=self._generate_result)
         
         self.output                   = scrolledtext.ScrolledText(frame, wrap=tkinter.NONE)
@@ -85,16 +87,17 @@ class GUI(tkinter.Tk):
         self.entry_minimum_confidence .place(x=500,  y=100,  width=50,  height=25)
 
         button_dataset_default        .place(x=0,    y=150,  width=110, height=25)
-        button_draw_dataset           .place(x=140,  y=150,  width=110, height=25)
+        button_generate_dataset       .place(x=140,  y=150,  width=110, height=25)
+        button_draw_dataset           .place(x=0,    y=200,  width=250, height=25)
         button_clean_output           .place(x=300,  y=150,  width=110, height=25)
         button_show_notes             .place(x=440,  y=150,  width=110, height=25)
-        button_generate_dataset       .place(x=0,    y=200,  width=250, height=25)
         button_generate_result        .place(x=300,  y=200,  width=250, height=25)
 
         x_scroll                      .place(x=0,    y=550,  width=550)
         self.output                   .place(x=0,    y=250,  width=550, height=300)
 
 
+    ##########   1. DATASET PART   ##########
     def _dataset_default(self):
         self.dataset, self.labels = self.create_dataset_default()
 
@@ -103,58 +106,8 @@ class GUI(tkinter.Tk):
         lines = self.output_dataset(self.dataset, self.labels)
         self.output.insert(tkinter.END, "\n".join(lines) + "\n")
         self.output.see(tkinter.END)
-
-
-    def _draw_dataset(self):
-        rows    = self.rows.get()
-        columns = self.columns.get()
-        size    = 20
-
-        self._window = tkinter.Toplevel(self)
-        self._canvas = tkinter.Canvas(self._window, height=rows*size, width=columns*size, bg="white")
-        self._canvas.pack()
-
-        # init grid state
-        self._grid_data = [[False]*columns for _ in range(rows)]
-        self._cell_rects = {}
-
-        # draw the grid
-        for row in range(rows):
-            for column in range(columns):
-                x0 = column*size
-                y0 = row*size
-                x1 = x0+size
-                y1 = y0+size
-                rid = self._canvas.create_rectangle(x0, y0, x1, y1, fill="white", outline="black")
-                self._cell_rects[(row,column)] = rid
-                self._canvas.tag_bind(rid, "<Button-1>", lambda e, r=row, c=column: self._toggle_cell(r, c))
-
-        # Done button
-        done_btn = tkinter.Button(self._window, text="Done", command=self._finish_drawing)
-        done_btn.pack(pady=5)
-
-    def _toggle_cell(self, r, c):
-        # flip state
-        self._grid_data[r][c] = not self._grid_data[r][c]
-        color = "black" if self._grid_data[r][c] else "white"
-        self._canvas.itemconfig(self._cell_rects[(r,c)], fill=color)
-
-    def _finish_drawing(self):
-        # build dataset from grid
-        labels = self.labels  # keep existing labels order
-        new_data = []
-        for r, row in enumerate(self._grid_data):
-            txn = [ labels[c] for c, filled in enumerate(row) if filled ]
-            new_data.append(txn)
-
-        # store and print
-        self.dataset = new_data
-        lines = self.output_dataset(self.dataset, labels)
-        self.output.insert(tkinter.END, "\n".join(lines) + "\n")
-        self.output.see(tkinter.END)
-
-        # close the draw window
-        self._window.destroy()
+        
+        self.label_minimum_support.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {len(self.dataset)})")
 
 
     def _generate_dataset(self):        
@@ -169,8 +122,51 @@ class GUI(tkinter.Tk):
         self.output.see(tkinter.END)
         
         self.label_minimum_support.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {rows})")
+        
+        
+    def _draw_dataset(self):
+        rows    = self._input_value(self.rows,      "rows")
+        columns = self._input_value(self.columns,   "columns")
+        
+        size    = 50
+
+        self._window = tkinter.Toplevel(self)
+        self._canvas = tkinter.Canvas(self._window, height=rows*size, width=columns*size, bg="white")
+        self._canvas.pack()
+
+        self._grid_data       = [[False]*columns for _ in range(rows)]
+        self._cell_rectangles = {}
+
+        for row in range(rows):
+            for column in range(columns):
+                x0, y0 = column*size, row*size
+                x1, y1 = x0+size    , y0+size
+                canvas = self._canvas.create_rectangle(x0, y0, x1, y1, fill="white", outline="black")
+                
+                self._cell_rectangles[(row,column)] = canvas
+                self._canvas.tag_bind(canvas, "<Button-1>", lambda e, r=row, c=column: self._toggle_cell(r, c))
+
+        tkinter.Button(self._window, text="Done", command=self._dataset_from_grid).pack(pady=5)
 
 
+    def _toggle_cell(self, rows, columns):
+        self._grid_data[rows][columns] = not self._grid_data[rows][columns]
+        color = "black" if self._grid_data[rows][columns] else "white"
+        self._canvas.itemconfig(self._cell_rectangles[(rows,columns)], fill=color)
+
+
+    def _dataset_from_grid(self):
+        self.dataset, self.labels = create_dataset_from_grid(self._grid_data)
+
+        lines = self.output_dataset(self.dataset, self.labels)
+        self.output.insert(tkinter.END, "\n".join(lines) + "\n")
+        self.output.see(tkinter.END)
+
+        self.label_minimum_support.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {len(self._grid_data)})")
+        self._window.destroy()
+
+
+    ##########   2. RESULT PART   ##########
     def _clean_output(self):
         self.output.delete('1.0', tkinter.END)
 

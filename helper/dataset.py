@@ -7,7 +7,7 @@ def create_dataset_default():
         ['a','c'],
         ['a','b','c','e'],
         ['b','c','e'],
-        ['a','b','c','e']
+        ['a','b','c','e'],
     ]
     labels = [_create_column_labels(i) for i in range(len(dataset))]
     
@@ -26,7 +26,19 @@ def create_dataset(rows, columns, density):
     for row in range(rows):
         start = row * columns
         row_bits = flat[start : start + columns]
-        txn = [labels[c] for c, bit in enumerate(row_bits) if bit]
+        txn = [labels[c] for c, filled in enumerate(row_bits) if filled]
+        dataset.append(txn)
+
+    return dataset, labels
+
+
+def create_dataset_from_grid(grid):
+    columns = len(grid[0]) if grid else 0
+    labels = [_create_column_labels(i) for i in range(columns)]
+
+    dataset = []
+    for row in grid:
+        txn = [ labels[c] for c, filled in enumerate(row) if filled ]
         dataset.append(txn)
 
     return dataset, labels
