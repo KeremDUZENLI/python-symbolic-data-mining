@@ -11,27 +11,18 @@ class CLI():
         self.dataset = None
 
         while True:
-            prompt = input("\n[d] Laszlo.rcf  |  [r] Generate Dataset  |  [Enter] Run Algorithm  |  [q] Quit  :  ").strip().lower()
+            prompt = input("\n[r] Generate Dataset  |  [d] Laszlo.rcf  |  [Enter] Run Algorithm  |  [q] Quit  :  ").strip().lower()
                    
-            if   prompt == 'd':
-                self._dataset_default()
-            elif prompt == 'r':
+            if   prompt == 'r':
                 self._generate_dataset()
+            elif prompt == 'd':
+                self._dataset_default()
             elif prompt == '':                
                 self._generate_result()
             elif prompt == 'q':
                 break
             else:
                 print("❌\tWRONG INPUT\t❌")
-
-
-    def _dataset_default(self):
-        self.dataset, self.labels = self.create_dataset_default()
-    
-        self.rows    = len(self.dataset)
-        
-        lines = self.output_dataset(self.dataset, self.labels)
-        print(*lines, sep='\n')
 
 
     def _generate_dataset(self):
@@ -42,6 +33,15 @@ class CLI():
         density     = self._input_value("Density", maximum=100)
         
         self.dataset, self.labels = self.create_dataset(self.rows, columns, density)
+        
+        lines = self.output_dataset(self.dataset, self.labels)
+        print(*lines, sep='\n')
+
+
+    def _dataset_default(self):
+        self.dataset, self.labels = self.create_dataset_default()
+    
+        self.rows    = len(self.dataset)
         
         lines = self.output_dataset(self.dataset, self.labels)
         print(*lines, sep='\n')

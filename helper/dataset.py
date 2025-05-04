@@ -1,20 +1,6 @@
 import random
 
 
-def create_dataset_default():
-    dataset = [
-        ['a','b','d','e'],
-        ['a','c'],
-        ['a','b','c','e'],
-        ['b','c','e'],
-        ['a','b','c','e'],
-    ]
-    dataset = [[item.upper() for item in txn] for txn in dataset]
-    labels = [_create_column_labels(i) for i in range(len(dataset[0])+1)]
-
-    return dataset, labels
-
-
 def create_dataset(rows, columns, density):
     labels = [_create_column_labels(i) for i in range(columns)]
 
@@ -29,6 +15,20 @@ def create_dataset(rows, columns, density):
         row_bits = flat[start : start + columns]
         txn = [labels[c] for c, filled in enumerate(row_bits) if filled]
         dataset.append(txn)
+
+    return dataset, labels
+
+
+def create_dataset_default():
+    dataset = [
+        ['a','b','d','e'],
+        ['a','c'],
+        ['a','b','c','e'],
+        ['b','c','e'],
+        ['a','b','c','e'],
+    ]
+    dataset = [[item.upper() for item in txn] for txn in dataset]
+    labels = [_create_column_labels(i) for i in range(len(dataset[0])+1)]
 
     return dataset, labels
 

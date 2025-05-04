@@ -1,16 +1,16 @@
 import tkinter
 from tkinter import scrolledtext
 
-from helper.dataset import create_dataset_from_grid
-
 
 class GUI(tkinter.Tk):    
-    def __init__(self, create_dataset_default, create_dataset, ALGORITHMS, run_algorithm, output_dataset, output_summary):       
-        self.create_dataset = create_dataset
-        self.algorithms     = ALGORITHMS
-        self.run_algorithm  = run_algorithm
-        self.output_dataset = output_dataset
-        self.output_summary = output_summary
+    def __init__(self, create_dataset, create_dataset_default, create_dataset_from_grid, ALGORITHMS, run_algorithm, output_dataset, output_summary):       
+        self.create_dataset           = create_dataset
+        self.create_dataset_default   = create_dataset_default
+        self.create_dataset_from_grid = create_dataset_from_grid
+        self.algorithms               = ALGORITHMS
+        self.run_algorithm            = run_algorithm
+        self.output_dataset           = output_dataset
+        self.output_summary           = output_summary
 
         self.rules = {
             "rows"               : (5, 10),
@@ -21,7 +21,6 @@ class GUI(tkinter.Tk):
         }
         self.rules["minimum_support"] = 1, self.rules["rows"][1]
         
-        self.create_dataset_default   = create_dataset_default
         self.algorithm_names          = [ self.algorithms[key].__name__ for key in sorted(self.algorithms.keys()) ]
         self.algorithm_names2keys     = { function.__name__: key for key, function in self.algorithms.items() }
         self.dataset = None
@@ -59,8 +58,8 @@ class GUI(tkinter.Tk):
         entry_minimum_support         = tkinter.Entry(frame, textvariable=self.minimum_support,    validate='key')                                                                 
         self.entry_minimum_confidence = tkinter.Entry(frame, textvariable=self.minimum_confidence, validate='key')
         
-        button_dataset_default        = tkinter.Button(frame, text="Laszlo.rcf",       command=self._dataset_default)
         button_generate_dataset       = tkinter.Button(frame, text="Generate Dataset", command=self._generate_dataset)
+        button_dataset_default        = tkinter.Button(frame, text="Laszlo.rcf",       command=self._dataset_default)
         button_draw_dataset           = tkinter.Button(frame, text="Draw Dataset",     command=self._draw_dataset)
         button_clean_output           = tkinter.Button(frame, text="Clean Output",     command=self._clean_output)
         button_show_notes             = tkinter.Button(frame, text="Show Notes",       command=self._show_notes)
@@ -87,8 +86,8 @@ class GUI(tkinter.Tk):
         entry_minimum_support         .place(x=500,  y=50,   width=50,  height=25)
         self.entry_minimum_confidence .place(x=500,  y=100,  width=50,  height=25)
 
-        button_dataset_default        .place(x=0,    y=150,  width=110, height=25)
-        button_generate_dataset       .place(x=140,  y=150,  width=110, height=25)
+        button_generate_dataset       .place(x=0,    y=150,  width=110, height=25)
+        button_dataset_default        .place(x=140,  y=150,  width=110, height=25)
         button_draw_dataset           .place(x=0,    y=200,  width=250, height=25)
         button_clean_output           .place(x=300,  y=150,  width=110, height=25)
         button_show_notes             .place(x=440,  y=150,  width=110, height=25)
@@ -99,18 +98,6 @@ class GUI(tkinter.Tk):
 
 
     ##########   1. DATASET PART   ##########
-    def _dataset_default(self):
-        self.dataset, self.labels = self.create_dataset_default()
-
-        self.rows.set(len(self.dataset))
-        
-        lines = self.output_dataset(self.dataset, self.labels)
-        self.output.insert(tkinter.END, "\n".join(lines) + "\n")
-        self.output.see(tkinter.END)
-        
-        self.label_minimum_support.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {len(self.dataset)})")
-
-
     def _generate_dataset(self):        
         rows    = self._input_value(self.rows,      "rows")
         columns = self._input_value(self.columns,   "columns")
@@ -123,6 +110,18 @@ class GUI(tkinter.Tk):
         self.output.see(tkinter.END)
         
         self.label_minimum_support.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {rows})")
+
+
+    def _dataset_default(self):
+        self.dataset, self.labels = self.create_dataset_default()
+
+        self.rows.set(len(self.dataset))
+        
+        lines = self.output_dataset(self.dataset, self.labels)
+        self.output.insert(tkinter.END, "\n".join(lines) + "\n")
+        self.output.see(tkinter.END)
+        
+        self.label_minimum_support.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {len(self.dataset)})")
         
         
     def _draw_dataset(self):
@@ -157,7 +156,7 @@ class GUI(tkinter.Tk):
 
 
     def _dataset_from_grid(self):
-        self.dataset, self.labels = create_dataset_from_grid(self._grid_data)
+        self.dataset, self.labels = self.create_dataset_from_grid(self._grid_data)
 
         lines = self.output_dataset(self.dataset, self.labels)
         self.output.insert(tkinter.END, "\n".join(lines) + "\n")
