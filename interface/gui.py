@@ -11,7 +11,6 @@ class GUI(tkinter.Tk):
         self.run_algorithm  = run_algorithm
         self.output_dataset = output_dataset
         self.output_summary = output_summary
-        super().__init__()
 
         self.rules = {
             "rows"               : (5, 10),
@@ -25,7 +24,9 @@ class GUI(tkinter.Tk):
         self.create_dataset_default   = create_dataset_default
         self.algorithm_names          = [ self.algorithms[key].__name__ for key in sorted(self.algorithms.keys()) ]
         self.algorithm_names2keys     = { function.__name__: key for key, function in self.algorithms.items() }
+        self.dataset = None
         
+        super().__init__()
         self._build_gui()
         self.mainloop()
 
@@ -184,6 +185,11 @@ class GUI(tkinter.Tk):
 
 
     def _generate_result(self):
+        if self.dataset is None:
+            self.output.insert(tkinter.END, ("⚠️\tDATASET NOT DEFINED\t⚠️") + "\n")
+            self.output.see(tkinter.END)
+            return
+
         algorithm_choice    = self.algorithm_names2keys[self.algorithm_choice.get()]
         minimum_support     = self._input_value(self.minimum_support,    "minimum_support")
         minimum_confidence  = self._input_value(self.minimum_confidence, "minimum_confidence")

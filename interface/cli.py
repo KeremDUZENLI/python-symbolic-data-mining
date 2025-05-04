@@ -18,14 +18,11 @@ class CLI():
             elif prompt == 'r':
                 self._generate_dataset()
             elif prompt == '':                
-                if self.dataset is None:
-                    print("❌ DATASET NOT DEFINED ❌") 
-                else:
-                    self._generate_result()
+                self._generate_result()
             elif prompt == 'q':
                 break
             else:
-                print("⚠️ WRONG INPUT ⚠️")
+                print("❌\tWRONG INPUT\t❌")
 
 
     def _dataset_default(self):
@@ -51,6 +48,9 @@ class CLI():
 
 
     def _generate_result(self):
+        if self.dataset is None:
+            print("⚠️\tDATASET NOT DEFINED\t⚠️")
+            return
         print("\n_____INPUT ALGORITHM VALUES_____\n")
         
         algorithm_choice    = self._input_value("  ".join(self.algorithm_names), maximum=len(self.algorithm_names))
@@ -70,10 +70,10 @@ class CLI():
             try:
                 value = int(input(f"{message} {range}: ").strip())
             except ValueError: 
-                print("❌ ONLY INTEGER VALUE ❌")
+                print("❌\tONLY INTEGER VALUE\t❌")
                 continue
             
             if (minimum is not None and value < minimum) or (maximum is not None and value > maximum):
-                print(f"❌ NOT VALID RANGE ❌")
+                print("⚠️\tNOT VALID RANGE\t⚠️")
             else:
                 return value
