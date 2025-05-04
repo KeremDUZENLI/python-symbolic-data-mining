@@ -12,7 +12,7 @@ Two user interfaces:
 
 
 
-## 🚀 Features
+## Features
 
 - **Default dataset** (“Laszlo.rcf”) plus random‐generation by rows/cols/density  
 - **Draw mode**: click-to-fill cells on a grid and auto-compute density  
@@ -21,7 +21,7 @@ Two user interfaces:
 
 
 
-## 💻 Usage
+## Usage
 
 ### CLI
 
@@ -40,7 +40,7 @@ Two user interfaces:
 
 
 
-## 🔍 Algorithms
+## Algorithms
 
 | ID | Name               | Output                                      |
 | -- | ------------------ | ------------------------------------------- |
@@ -50,6 +50,29 @@ Two user interfaces:
 | 4  | `eclat`            | vertical‐format frequent itemsets           |
 | 5  | `association_rule` | association rules (antecedent ⇒ consequent) |
 
+
+
+## Project Tree
+
+```bash
+├── algorithms
+│   ├── __init__.py
+│   ├── apriori.py
+│   └── eclat.py
+├── helper
+│   ├── dataset.py
+│   └── output.py
+├── interface
+│   ├── cli.py
+│   └── gui.py
+├── notes
+│   └── Notes_Kerem.pdf
+├── tests
+│   └── test_algorithms.py
+├── main.py
+├── LICENSE
+├── README.md
+```
 
 
 ## Acknowledgments
@@ -88,12 +111,12 @@ This repository is intended **only for educational and research purposes**. The 
 
 
 
-## Support My Work
+## Support My Projects
 
 If you find this resource valuable and would like to help support my education and doctoral research, please consider treating me to a cup of coffee (or tea) via Revolut.
 
 <div align="center">
   <a href="https://revolut.me/krmdznl" target="_blank">
-    <img src="https://img.shields.io/badge/Support%20My%20Projects-Donate%20via%20Revolut-orange?style=for-the-badge" alt="Support my education via Revolut" />
+    <img src="https://img.shields.io/badge/Support%20My%20Projects-Donate%20via%20Revolut-orange?style=for-the-badge" alt="Support my projects via Revolut" />
   </a>
 </div> <br>

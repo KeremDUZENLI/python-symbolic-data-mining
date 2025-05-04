@@ -26,6 +26,7 @@ class GUI(tkinter.Tk):
         
         super().__init__()
         self._build_gui()
+        self._welcome_message()
         self.mainloop()
 
 
@@ -92,8 +93,16 @@ class GUI(tkinter.Tk):
         button_show_notes             .place(x=440,  y=150,  width=110, height=25)
         button_generate_result        .place(x=300,  y=200,  width=250, height=25)
 
-        x_scroll                      .place(x=0,    y=550,  width=550)
+        x_scroll                      .place(x=0,    y=530,  width=550)
         self.output                   .place(x=0,    y=250,  width=550, height=300)
+        
+        repository_button = tkinter.Button(self, text="Repository", command=lambda: self._url("https://github.com/KeremDUZENLI/python-symbolic-data-mining"))
+        footer_label      = tkinter.Label (self, text="Developed by Kerem Düzenli", fg="gray")
+        donate_button     = tkinter.Button(self, text="Support"   , command=lambda: self._url("https://revolut.me/krmdznl"))
+        
+        repository_button.place(x=100, y=577.5, width=100, height=20)
+        footer_label     .place(x=200, y=577.5, width=200, height=20)
+        donate_button    .place(x=400, y=577.5, width=100, height=20)
 
 
     ##########   1. DATASET PART   ##########
@@ -199,20 +208,26 @@ class GUI(tkinter.Tk):
 
 
     def _show_notes(self):
-        pdf    = self.tk.call('file', 'normalize', 'notes/Notes_Kerem.pdf')
-        system = self.tk.call('tk', 'windowingsystem')
-
-        if system == 'win32':
-            self.tk.call('exec', 'cmd', '/c', 'start', '', pdf)
-        elif system == 'aqua':
-            self.tk.call('exec', 'open', pdf)
+        import os, sys
+        
+        if getattr(sys, 'frozen', False):
+            base = sys._MEIPASS
         else:
-            self.tk.call('exec', 'xdg-open', pdf)
+            base = os.path.dirname(__file__)
+
+        pdf_path = os.path.join(base, 'notes', 'Notes_Kerem.pdf')
+        system = self.tk.call('tk', 'windowingsystem')
+        if system == 'win32':
+            os.startfile(pdf_path)
+        elif system == 'aqua':
+            self.tk.call('exec', 'open', pdf_path)
+        else:
+            self.tk.call('exec', 'xdg-open', pdf_path)
 
 
     def _generate_result(self):
         if self.dataset is None:
-            self.output.insert(tkinter.END, ("⚠️ DATASET NOT DEFINED ⚠️") + "\n")
+            self.output.insert(tkinter.END, ("!!! DATASET NOT DEFINED !!!") + "\n")
             self.output.see(tkinter.END)
             return
 
@@ -228,6 +243,7 @@ class GUI(tkinter.Tk):
         self.output.see(tkinter.END)
 
 
+    ##########   HELPERS   ##########
     def _input_value(self, value, label_name):      
         minimum, maximum = self.rules.get(label_name, (None, None))
         maximum          = self.rows.get() if label_name == "minimum_support" else maximum
@@ -248,3 +264,30 @@ class GUI(tkinter.Tk):
 
     def _toggle_entry(self, *args):
         self.entry_minimum_confidence.config(state="normal" if self.algorithm_choice.get() == "association_rule" else "disabled")
+
+
+    def _url(self, url):
+        import webbrowser
+        webbrowser.open_new(url)
+
+
+    def _welcome_message(self):
+        lines = [
+            "_"*50,
+            "SYMBOLIC DATA MINING",
+            "Instructor: Dr. László Szathmáry",
+            "Developer : Kerem Düzenli | PhD Candidate, University of Debrecen",
+            "_"*50,
+            "Features:",
+            "- Frequent itemset mining (Apriori, Apriori-Close, Apriori-Rare, Eclat)",
+            "- Association rule generation (confidence-based)",
+            "- CLI & GUI (draw or generate datasets visually)",
+            "- Laszlo.rcf default dataset + random dataset generator",
+            "- Clear, aligned output with support/confidence thresholds",
+            "_"*50,
+            "Educational use only | Licensed under CC BY-NC 4.0",
+            "_"*50,
+            ""
+        ]
+        self.output.insert(tkinter.END, "\n".join(lines))
+        self.output.see(tkinter.END)
