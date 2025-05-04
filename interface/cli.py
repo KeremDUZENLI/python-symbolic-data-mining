@@ -8,18 +8,24 @@ class CLI():
         
         self.create_dataset_default = create_dataset_default
         self.algorithm_names = [f"{key}) {function.__name__}" for key, function in sorted(self.algorithms.items())]
+        self.dataset = None
 
-        self._dataset_default()
         while True:
-            prompt = input("\n[q] Quit  |  [r] Generate Dataset  |  [Enter] Run Algorithm  ").strip().lower()
-            print()
+            prompt = input("\n[d] Laszlo.rcf  |  [r] Generate Dataset  |  [Enter] Run Algorithm  |  [q] Quit  :  ").strip().lower()
                    
-            if prompt == 'q':
-                break
+            if   prompt == 'd':
+                self._dataset_default()
             elif prompt == 'r':
                 self._generate_dataset()
+            elif prompt == '':                
+                if self.dataset is None:
+                    print("❌ DATASET NOT DEFINED ❌") 
+                else:
+                    self._generate_result()
+            elif prompt == 'q':
+                break
             else:
-                self._generate_result()
+                print("⚠️ WRONG INPUT ⚠️")
 
 
     def _dataset_default(self):
@@ -32,6 +38,8 @@ class CLI():
 
 
     def _generate_dataset(self):
+        print("\n_____INPUT DATASET VALUES_____\n")
+        
         self.rows   = self._input_value("Number of Rows", maximum=10)
         columns     = self._input_value("Number of Columns", maximum=10)
         density     = self._input_value("Density", maximum=100)
@@ -43,6 +51,8 @@ class CLI():
 
 
     def _generate_result(self):
+        print("\n_____INPUT ALGORITHM VALUES_____\n")
+        
         algorithm_choice    = self._input_value("  ".join(self.algorithm_names), maximum=len(self.algorithm_names))
         minimum_support     = self._input_value("Minimum Support", maximum=self.rows)
         minimum_confidence  = self._input_value("Minimum Confidence", minimum=1, maximum=100) if algorithm_choice == 5 else None
