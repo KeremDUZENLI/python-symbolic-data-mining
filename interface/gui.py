@@ -25,7 +25,6 @@ class GUI(tkinter.Tk):
         self.algorithm_names2keys     = { function.__name__: key for key, function in self.algorithms.items() }
         
         self._build_gui()
-        self._generate_dataset_default()
         self.mainloop()
 
 
@@ -158,7 +157,7 @@ class GUI(tkinter.Tk):
 
 
     def _show_notes(self):
-        pdf    = self.tk.call('file', 'normalize', 'notes/Notes.pdf')
+        pdf    = self.tk.call('file', 'normalize', 'notes/Notes_Kerem.pdf')
         system = self.tk.call('tk', 'windowingsystem')
 
         if system == 'win32':
