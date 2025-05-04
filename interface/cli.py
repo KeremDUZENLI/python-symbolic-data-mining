@@ -9,7 +9,7 @@ class CLI():
         self.create_dataset_default = create_dataset_default
         self.algorithm_names = [f"{key}) {function.__name__}" for key, function in sorted(self.algorithms.items())]
 
-        self._generate_dataset_default()
+        self._dataset_default()
         while True:
             prompt = input("\n[q] Quit  |  [r] Generate Dataset  |  [Enter] Run Algorithm  ").strip().lower()
             print()
@@ -22,7 +22,7 @@ class CLI():
                 self._generate_result()
 
 
-    def _generate_dataset_default(self):
+    def _dataset_default(self):
         self.dataset, self.labels = self.create_dataset_default()
     
         self.rows    = len(self.dataset)

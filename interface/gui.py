@@ -56,11 +56,12 @@ class GUI(tkinter.Tk):
         entry_minimum_support         = tkinter.Entry(frame, textvariable=self.minimum_support,    validate='key')                                                                 
         self.entry_minimum_confidence = tkinter.Entry(frame, textvariable=self.minimum_confidence, validate='key')
         
+        button_dataset_default        = tkinter.Button(frame, text="Laszlo.rcf",       command=self._dataset_default)
+        button_draw_dataset           = tkinter.Button(frame, text="Draw Dataset",     command=self._draw_dataset)
+        button_clean_output           = tkinter.Button(frame, text="Clean Output",     command=self._clean_output)
+        button_show_notes             = tkinter.Button(frame, text="Show Notes",       command=self._show_notes)
         button_generate_dataset       = tkinter.Button(frame, text="Generate Dataset", command=self._generate_dataset)
         button_generate_result        = tkinter.Button(frame, text="Generate Result",  command=self._generate_result)
-        button_generate_dataset_def   = tkinter.Button(frame, text="Laszlo.rcf",       command=self._generate_dataset_default)
-        button_generate_clean_output  = tkinter.Button(frame, text="Clean Output",     command=self._clean_output)
-        button_generate_notes         = tkinter.Button(frame, text="Show Notes",       command=self._show_notes)
         
         self.output                   = scrolledtext.ScrolledText(frame, wrap=tkinter.NONE)
         x_scroll                      = tkinter.Scrollbar(frame, orient='horizontal', command=self.output.xview)
@@ -83,9 +84,10 @@ class GUI(tkinter.Tk):
         entry_minimum_support         .place(x=500,  y=50,   width=50,  height=25)
         self.entry_minimum_confidence .place(x=500,  y=100,  width=50,  height=25)
 
-        button_generate_dataset_def   .place(x=0,    y=150,  width=250, height=25)
-        button_generate_clean_output  .place(x=300,  y=150,  width=110, height=25)
-        button_generate_notes         .place(x=440,  y=150,  width=110, height=25)
+        button_dataset_default        .place(x=0,    y=150,  width=110, height=25)
+        button_draw_dataset           .place(x=140,  y=150,  width=110, height=25)
+        button_clean_output           .place(x=300,  y=150,  width=110, height=25)
+        button_show_notes             .place(x=440,  y=150,  width=110, height=25)
         button_generate_dataset       .place(x=0,    y=200,  width=250, height=25)
         button_generate_result        .place(x=300,  y=200,  width=250, height=25)
 
@@ -93,11 +95,7 @@ class GUI(tkinter.Tk):
         self.output                   .place(x=0,    y=250,  width=550, height=300)
 
 
-    def _toggle_entry(self, *args):
-        self.entry_minimum_confidence.config(state="normal" if self.algorithm_choice.get() == "association_rule" else "disabled")
-
-
-    def _generate_dataset_default(self):
+    def _dataset_default(self):
         self.dataset, self.labels = self.create_dataset_default()
     
         self.rows.set(len(self.dataset))
@@ -105,6 +103,10 @@ class GUI(tkinter.Tk):
         lines = self.output_dataset(self.dataset, self.labels)
         self.output.insert(tkinter.END, "\n".join(lines) + "\n")
         self.output.see(tkinter.END)
+
+
+    def _draw_dataset(self):
+        return None
 
 
     def _generate_dataset(self):        
@@ -119,6 +121,22 @@ class GUI(tkinter.Tk):
         self.output.see(tkinter.END)
         
         self.label_minimum_support.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {rows})")
+
+
+    def _clean_output(self):
+        self.output.delete('1.0', tkinter.END)
+
+
+    def _show_notes(self):
+        pdf    = self.tk.call('file', 'normalize', 'notes/Notes_Kerem.pdf')
+        system = self.tk.call('tk', 'windowingsystem')
+
+        if system == 'win32':
+            self.tk.call('exec', 'cmd', '/c', 'start', '', pdf)
+        elif system == 'aqua':
+            self.tk.call('exec', 'open', pdf)
+        else:
+            self.tk.call('exec', 'xdg-open', pdf)
 
 
     def _generate_result(self):
@@ -152,17 +170,5 @@ class GUI(tkinter.Tk):
         return value_int
 
 
-    def _clean_output(self):
-        self.output.delete('1.0', tkinter.END)
-
-
-    def _show_notes(self):
-        pdf    = self.tk.call('file', 'normalize', 'notes/Notes_Kerem.pdf')
-        system = self.tk.call('tk', 'windowingsystem')
-
-        if system == 'win32':
-            self.tk.call('exec', 'cmd', '/c', 'start', '', pdf)
-        elif system == 'aqua':
-            self.tk.call('exec', 'open', pdf)
-        else:
-            self.tk.call('exec', 'xdg-open', pdf)
+    def _toggle_entry(self, *args):
+        self.entry_minimum_confidence.config(state="normal" if self.algorithm_choice.get() == "association_rule" else "disabled")
