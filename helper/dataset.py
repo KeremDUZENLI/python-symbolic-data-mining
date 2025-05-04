@@ -9,8 +9,9 @@ def create_dataset_default():
         ['b','c','e'],
         ['a','b','c','e'],
     ]
-    labels = [_create_column_labels(i) for i in range(len(dataset))]
-    
+    dataset = [[item.upper() for item in txn] for txn in dataset]
+    labels = [_create_column_labels(i) for i in range(len(dataset[0])+1)]
+
     return dataset, labels
 
 
@@ -33,8 +34,7 @@ def create_dataset(rows, columns, density):
 
 
 def create_dataset_from_grid(grid):
-    columns = len(grid[0]) if grid else 0
-    labels = [_create_column_labels(i) for i in range(columns)]
+    labels = [_create_column_labels(i) for i in range(len(grid[0]))]
 
     dataset = []
     for row in grid:
