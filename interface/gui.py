@@ -3,10 +3,9 @@ from tkinter import scrolledtext
 
 
 class GUI(tkinter.Tk):    
-    def __init__(self, create_dataset, create_dataset_default, create_dataset_from_grid, ALGORITHMS, run_algorithm, output_dataset, output_summary):       
+    def __init__(self, create_dataset, create_dataset_default, ALGORITHMS, run_algorithm, output_dataset, output_summary):       
         self.create_dataset           = create_dataset
         self.create_dataset_default   = create_dataset_default
-        self.create_dataset_from_grid = create_dataset_from_grid
         self.algorithms               = ALGORITHMS
         self.run_algorithm            = run_algorithm
         self.output_dataset           = output_dataset
@@ -176,7 +175,8 @@ class GUI(tkinter.Tk):
 
 
     def _dataset_from_grid(self):
-        self.dataset, self.labels = self.create_dataset_from_grid(self._grid_data)
+        from helper.dataset import create_dataset_from_grid
+        self.dataset, self.labels = create_dataset_from_grid(self._grid_data)
         
 
         lines = self.output_dataset(self.dataset, self.labels)

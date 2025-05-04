@@ -1,12 +1,12 @@
 class CLI():
-    def __init__(self, create_dataset_default, create_dataset, ALGORITHMS, run_algorithm, output_dataset, output_summary):
-        self.create_dataset = create_dataset
-        self.algorithms     = ALGORITHMS
-        self.run_algorithm  = run_algorithm
-        self.output_dataset = output_dataset
-        self.output_summary = output_summary
-        
+    def __init__(self, create_dataset, create_dataset_default, ALGORITHMS, run_algorithm, output_dataset, output_summary):
+        self.create_dataset         = create_dataset
         self.create_dataset_default = create_dataset_default
+        self.algorithms             = ALGORITHMS
+        self.run_algorithm          = run_algorithm
+        self.output_dataset         = output_dataset
+        self.output_summary         = output_summary
+        
         self.algorithm_names = [f"{key}) {function.__name__}" for key, function in sorted(self.algorithms.items())]
         self.dataset = None
 
