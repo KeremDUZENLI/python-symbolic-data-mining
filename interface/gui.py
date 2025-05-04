@@ -61,7 +61,7 @@ class GUI(tkinter.Tk):
         button_generate_dataset       = tkinter.Button(frame, text="Generate Dataset", command=self._generate_dataset)
         button_dataset_default        = tkinter.Button(frame, text="Laszlo.rcf",       command=self._dataset_default)
         button_draw_dataset           = tkinter.Button(frame, text="Draw Dataset",     command=self._draw_dataset)
-        button_clean_output           = tkinter.Button(frame, text="Clean Output",     command=self._clean_output)
+        button_clear_output           = tkinter.Button(frame, text="Clear Output",     command=self._clear_output)
         button_show_notes             = tkinter.Button(frame, text="Show Notes",       command=self._show_notes)
         button_generate_result        = tkinter.Button(frame, text="Generate Result",  command=self._generate_result)
         
@@ -89,7 +89,7 @@ class GUI(tkinter.Tk):
         button_generate_dataset       .place(x=0,    y=150,  width=110, height=25)
         button_dataset_default        .place(x=140,  y=150,  width=110, height=25)
         button_draw_dataset           .place(x=0,    y=200,  width=250, height=25)
-        button_clean_output           .place(x=300,  y=150,  width=110, height=25)
+        button_clear_output           .place(x=300,  y=150,  width=110, height=25)
         button_show_notes             .place(x=440,  y=150,  width=110, height=25)
         button_generate_result        .place(x=300,  y=200,  width=250, height=25)
 
@@ -203,7 +203,7 @@ class GUI(tkinter.Tk):
 
 
     ##########   2. RESULT PART   ##########
-    def _clean_output(self):
+    def _clear_output(self):
         self.output.delete('1.0', tkinter.END)
 
 
