@@ -39,10 +39,10 @@ class GUI(tkinter.Tk):
 
         self.rows                     = tkinter.IntVar(value=5)
         self.columns                  = tkinter.IntVar(value=5)
-        self.density                  = tkinter.IntVar(value=50)
+        self.density                  = tkinter.IntVar(value=0)
         self.algorithm_choice         = tkinter.StringVar(value=self.algorithm_names[0])
         self.minimum_support          = tkinter.IntVar(value=3)
-        self.minimum_confidence       = tkinter.IntVar(value=50)
+        self.minimum_confidence       = tkinter.IntVar(value=0)
         
         label_rows                    = tkinter.Label(frame, text=f"Number of Rows ({self.rules['rows'][0]} - {self.rules['rows'][1]})", anchor='w', justify='left')            
         label_columns                 = tkinter.Label(frame, text=f"Number of Columns ({self.rules['columns'][0]} - {self.rules['columns'][1]})", anchor='w', justify='left')
