@@ -9,21 +9,13 @@ def create_dataset_default():
         ['b','c','e'],
         ['a','b','c','e']
     ]
-    labels = sorted({item for rows in dataset for item in rows})
+    labels = [_create_column_labels(i) for i in range(len(dataset))]
+    
     return dataset, labels
 
 
 def create_dataset(rows, columns, density):
-    def col_label(i):
-        label = ""
-        while True:
-            label = chr(ord('a') + (i % 26)) + label
-            i = i // 26 - 1
-            if i < 0:
-                break
-        return label
-
-    labels = [col_label(i) for i in range(columns)]
+    labels = [_create_column_labels(i) for i in range(columns)]
 
     total_cells = rows * columns
     occurencies = int(total_cells * (density / 100))
@@ -31,10 +23,20 @@ def create_dataset(rows, columns, density):
     random.shuffle(flat)
 
     dataset = []
-    for r in range(rows):
-        start = r * columns
+    for row in range(rows):
+        start = row * columns
         row_bits = flat[start : start + columns]
         txn = [labels[c] for c, bit in enumerate(row_bits) if bit]
         dataset.append(txn)
 
     return dataset, labels
+
+
+def _create_column_labels(i):
+    label = ""
+    while True:
+        label = chr(ord('a') + (i % 26)) + label
+        i = i // 26 - 1
+        if i < 0:
+            break
+    return label.upper()

@@ -97,7 +97,7 @@ class GUI(tkinter.Tk):
 
     def _dataset_default(self):
         self.dataset, self.labels = self.create_dataset_default()
-    
+
         self.rows.set(len(self.dataset))
         
         lines = self.output_dataset(self.dataset, self.labels)
@@ -106,7 +106,55 @@ class GUI(tkinter.Tk):
 
 
     def _draw_dataset(self):
-        return None
+        rows    = self.rows.get()
+        columns = self.columns.get()
+        size    = 20
+
+        self._window = tkinter.Toplevel(self)
+        self._canvas = tkinter.Canvas(self._window, height=rows*size, width=columns*size, bg="white")
+        self._canvas.pack()
+
+        # init grid state
+        self._grid_data = [[False]*columns for _ in range(rows)]
+        self._cell_rects = {}
+
+        # draw the grid
+        for row in range(rows):
+            for column in range(columns):
+                x0 = column*size
+                y0 = row*size
+                x1 = x0+size
+                y1 = y0+size
+                rid = self._canvas.create_rectangle(x0, y0, x1, y1, fill="white", outline="black")
+                self._cell_rects[(row,column)] = rid
+                self._canvas.tag_bind(rid, "<Button-1>", lambda e, r=row, c=column: self._toggle_cell(r, c))
+
+        # Done button
+        done_btn = tkinter.Button(self._window, text="Done", command=self._finish_drawing)
+        done_btn.pack(pady=5)
+
+    def _toggle_cell(self, r, c):
+        # flip state
+        self._grid_data[r][c] = not self._grid_data[r][c]
+        color = "black" if self._grid_data[r][c] else "white"
+        self._canvas.itemconfig(self._cell_rects[(r,c)], fill=color)
+
+    def _finish_drawing(self):
+        # build dataset from grid
+        labels = self.labels  # keep existing labels order
+        new_data = []
+        for r, row in enumerate(self._grid_data):
+            txn = [ labels[c] for c, filled in enumerate(row) if filled ]
+            new_data.append(txn)
+
+        # store and print
+        self.dataset = new_data
+        lines = self.output_dataset(self.dataset, labels)
+        self.output.insert(tkinter.END, "\n".join(lines) + "\n")
+        self.output.see(tkinter.END)
+
+        # close the draw window
+        self._window.destroy()
 
 
     def _generate_dataset(self):        
