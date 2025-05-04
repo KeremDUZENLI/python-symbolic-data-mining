@@ -11,14 +11,12 @@ Two user interfaces:
 2. **GUI** – Tkinter desktop app (draw your own dataset!)  
 
 
-
 ## Features
 
 - **Default dataset** (“Laszlo.rcf”) plus random‐generation by rows/cols/density  
 - **Draw mode**: click-to-fill cells on a grid and auto-compute density  
 - **Sort & format**: clear, aligned output of itemsets & rules  
 - **Cross-platform packing**: ready for Windows, macOS & Linux  
-
 
 
 ## Usage
@@ -30,14 +28,12 @@ Two user interfaces:
 * `[Enter]` choose algorithm & support/confidence, then run
 * `[q]` quit
 
-
 ### GUI
 
 1. Set **Rows**, **Columns**, **Density**
 2. Click **Draw Dataset** to manually fill cells (or **Laszlo.rcf** to load default)
 3. Select **Algorithm** and (if Association Rule) **Min. Confidence**
 4. **Generate Dataset** → **Generate Result**
-
 
 
 ## Algorithms
@@ -49,7 +45,6 @@ Two user interfaces:
 | 3  | `apriori_rare`     | rare itemsets below support threshold       |
 | 4  | `eclat`            | vertical‐format frequent itemsets           |
 | 5  | `association_rule` | association rules (antecedent ⇒ consequent) |
-
 
 
 ## Project Tree
@@ -91,7 +86,6 @@ This project is based on the **Symbolic Data Mining** course at the **University
   - Email: [kerem.duzenli@inf.unideb.hu](mailto:kerem.duzenli@inf.unideb.hu)
 
 
-
 ## License
 
 This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)** license. This means you are free to:
@@ -104,11 +98,9 @@ However, **you may not use the material for commercial purposes**.
 For details, see the [LICENSE](LICENSE) file or read more at [Creative Commons](https://creativecommons.org/licenses/by-nc/4.0/).
 
 
-
 ## Disclaimer
 
 This repository is intended **only for educational and research purposes**. The authors and contributors assume no responsibility for misuse of the code or any implications arising from its use.
-
 
 
 ## Support My Projects
