@@ -1,11 +1,14 @@
 import tkinter
 from tkinter import scrolledtext
 
+from helper import create_column_labels, open_pdf, open_url, welcome_message
+
 
 class GUI(tkinter.Tk):    
-    def __init__(self, create_dataset, create_dataset_default, ALGORITHMS, run_algorithm, output_dataset, output_summary):       
+    def __init__(self, create_dataset, create_dataset_default, create_dataset_from_grid, ALGORITHMS, run_algorithm, output_dataset, output_summary):       
         self.create_dataset           = create_dataset
         self.create_dataset_default   = create_dataset_default
+        self.create_dataset_from_grid = create_dataset_from_grid
         self.algorithms               = ALGORITHMS
         self.run_algorithm            = run_algorithm
         self.output_dataset           = output_dataset
@@ -19,14 +22,13 @@ class GUI(tkinter.Tk):
             "minimum_confidence" : (0, 100),
         }
         self.rules["minimum_support"] = 1, self.rules["rows"][1]
-        
+
         self.algorithm_names          = [ self.algorithms[key].__name__ for key in sorted(self.algorithms.keys()) ]
         self.algorithm_names2keys     = { function.__name__: key for key, function in self.algorithms.items() }
         self.dataset = None
-        
+
         super().__init__()
         self._build_gui()
-        self._welcome_message()
         self.mainloop()
 
 
@@ -62,16 +64,16 @@ class GUI(tkinter.Tk):
         button_dataset_default        = tkinter.Button(frame, text="Laszlo.rcf",       command=self._dataset_default)
         button_draw_dataset           = tkinter.Button(frame, text="Draw Dataset",     command=self._draw_dataset)
         button_clear_output           = tkinter.Button(frame, text="Clear Output",     command=self._clear_output)
-        button_show_notes             = tkinter.Button(frame, text="Show Notes",       command=self._show_notes)
+        button_show_notes             = tkinter.Button(frame, text="Show Notes",       command=lambda: open_pdf("notes/Notes_Kerem.pdf"))
         button_generate_result        = tkinter.Button(frame, text="Generate Result",  command=self._generate_result)
+        
+        label_footer                  = tkinter.Label (self, text="Developed by Kerem Düzenli", fg="gray")
+        button_repository             = tkinter.Button(self, text="Repository", command=lambda: open_url("https://github.com/KeremDUZENLI/python-symbolic-data-mining"))
+        button_donate                 = tkinter.Button(self, text="Support"   , command=lambda: open_url("https://revolut.me/krmdznl"))
         
         self.output                   = scrolledtext.ScrolledText(frame, wrap=tkinter.NONE)
         x_scroll                      = tkinter.Scrollbar(frame, orient='horizontal', command=self.output.xview)
-        self.output.config(xscrollcommand=x_scroll.set)
         
-        self.algorithm_choice.trace_add("write", self._toggle_entry)
-        self._toggle_entry()
-
         label_rows                    .place(x=0,    y=0,    width=190, height=25)
         label_columns                 .place(x=0,    y=50,   width=190, height=25)
         label_density                 .place(x=0,    y=100,  width=190, height=25)
@@ -92,49 +94,45 @@ class GUI(tkinter.Tk):
         button_clear_output           .place(x=300,  y=150,  width=110, height=25)
         button_show_notes             .place(x=440,  y=150,  width=110, height=25)
         button_generate_result        .place(x=300,  y=200,  width=250, height=25)
+        
+        label_footer                  .place(x=200, y=577.5, width=200, height=20)
+        button_repository             .place(x=100, y=577.5, width=100, height=20)
+        button_donate                 .place(x=400, y=577.5, width=100, height=20)
 
-        x_scroll                      .place(x=0,    y=530,  width=550)
         self.output                   .place(x=0,    y=250,  width=550, height=300)
+        x_scroll                      .place(x=0,    y=530,  width=550)
         
-        repository_button = tkinter.Button(self, text="Repository", command=lambda: self._url("https://github.com/KeremDUZENLI/python-symbolic-data-mining"))
-        footer_label      = tkinter.Label (self, text="Developed by Kerem Düzenli", fg="gray")
-        donate_button     = tkinter.Button(self, text="Support"   , command=lambda: self._url("https://revolut.me/krmdznl"))
-        
-        repository_button.place(x=100, y=577.5, width=100, height=20)
-        footer_label     .place(x=200, y=577.5, width=200, height=20)
-        donate_button    .place(x=400, y=577.5, width=100, height=20)
-
-
-    ##########   1. DATASET PART   ##########
-    def _generate_dataset(self):        
-        rows    = self._input_value(self.rows,      "rows")
-        columns = self._input_value(self.columns,   "columns")
-        density = self._input_value(self.density,   "density")
-        
-        self.dataset, self.labels = self.create_dataset(rows, columns, density)
-        
-        lines = self.output_dataset(self.dataset, self.labels)
+        lines = welcome_message()
         self.output.insert(tkinter.END, "\n".join(lines) + "\n")
         self.output.see(tkinter.END)
+
+        self.algorithm_choice         .trace_add("write", lambda *args: self.entry_minimum_confidence.config(state="normal" if self.algorithm_choice.get() == "association_rule" else "disabled"))
+        self.output                   .config(xscrollcommand=x_scroll.set)
+
+
+    def _generate_dataset(self):        
+        rows    = self._input_value(self.rows,    "rows")
+        columns = self._input_value(self.columns, "columns")
+        density = self._input_value(self.density, "density")
+        
+        self.dataset, self.labels = self.create_dataset(rows, columns, density)
+        self._show_dataset()
         
         self.label_minimum_support.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {rows})")
 
 
     def _dataset_default(self):
         self.dataset, self.labels = self.create_dataset_default()
-
-        self.rows.set(len(self.dataset))
+        self._show_dataset()
         
-        lines = self.output_dataset(self.dataset, self.labels)
-        self.output.insert(tkinter.END, "\n".join(lines) + "\n")
-        self.output.see(tkinter.END)
-        
-        self.label_minimum_support.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {len(self.dataset)})")
+        self.rows.set(len(self.dataset)  if self.dataset else 0)
+        self.columns.set(len(self.labels) if self.labels else 0)
+        self.label_minimum_support.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {self.rows.get()})")
 
 
     def _draw_dataset(self):
-        rows    = self._input_value(self.rows,      "rows")
-        columns = self._input_value(self.columns,   "columns")
+        rows    = self._input_value(self.rows,    "rows")
+        columns = self._input_value(self.columns, "columns")
         size    = 50
 
         header_height = size * 0.5
@@ -146,9 +144,7 @@ class GUI(tkinter.Tk):
         self._canvas = tkinter.Canvas(self._window, height=canvas_height, width=canvas_width, bg="white")
         self._canvas.pack()
 
-
-        from helper.dataset import _create_column_labels
-        labels = [_create_column_labels(i) for i in range(columns)]
+        labels = [create_column_labels(item) for item in range(columns)]
 
         for cell, label in enumerate(labels):
             position_x = header_width + cell*size + size/2
@@ -184,45 +180,28 @@ class GUI(tkinter.Tk):
 
 
     def _dataset_from_grid(self):
-        from helper.dataset import create_dataset_from_grid
-        self.dataset, self.labels = create_dataset_from_grid(self._grid_data)
-        
+        self.dataset, self.labels = self.create_dataset_from_grid(self._grid_data)
+        self._show_dataset()
 
-        lines = self.output_dataset(self.dataset, self.labels)
-        self.output.insert(tkinter.END, "\n".join(lines) + "\n")
-        self.output.see(tkinter.END)
-
-        self.label_minimum_support.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {len(self._grid_data)})")
-        
         filled_cells = sum(1 for row in self._grid_data for filled in row if filled)
         total_cells  = len(self._grid_data) * (len(self._grid_data[0]) if self._grid_data else 0)
         new_density  = int((filled_cells / total_cells) * 100) if total_cells else 0
+        
         self.density.set(new_density)
+        self.label_minimum_support.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {self.rows.get()})")
         
         self._window.destroy()
 
 
-    ##########   2. RESULT PART   ##########
+    def _show_dataset(self):
+        lines = self.output_dataset(self.dataset, self.labels)
+        self.output.insert(tkinter.END, "\n".join(lines) + "\n")
+        self.output.see(tkinter.END)
+
+
     def _clear_output(self):
-        self.output.delete('1.0', tkinter.END)
-
-
-    def _show_notes(self):
-        import os, sys
-        
-        if getattr(sys, 'frozen', False):
-            base = sys._MEIPASS
-        else:
-            base = os.path.dirname(__file__)
-
-        pdf_path = os.path.join(base, 'notes', 'Notes_Kerem.pdf')
-        system = self.tk.call('tk', 'windowingsystem')
-        if system == 'win32':
-            os.startfile(pdf_path)
-        elif system == 'aqua':
-            self.tk.call('exec', 'open', pdf_path)
-        else:
-            self.tk.call('exec', 'xdg-open', pdf_path)
+        self.output.delete('1.0', tkinter.END)       
+        self._show_dataset() if self.dataset else None
 
 
     def _generate_result(self):
@@ -243,7 +222,6 @@ class GUI(tkinter.Tk):
         self.output.see(tkinter.END)
 
 
-    ##########   HELPERS   ##########
     def _input_value(self, value, label_name):      
         minimum, maximum = self.rules.get(label_name, (None, None))
         maximum          = self.rows.get() if label_name == "minimum_support" else maximum
@@ -260,34 +238,3 @@ class GUI(tkinter.Tk):
         
         value.set(value_int)
         return value_int
-
-
-    def _toggle_entry(self, *args):
-        self.entry_minimum_confidence.config(state="normal" if self.algorithm_choice.get() == "association_rule" else "disabled")
-
-
-    def _url(self, url):
-        import webbrowser
-        webbrowser.open_new(url)
-
-
-    def _welcome_message(self):
-        lines = [
-            "_"*50,
-            "SYMBOLIC DATA MINING",
-            "Instructor: Dr. László Szathmáry",
-            "Developer : Kerem Düzenli | PhD Candidate, University of Debrecen",
-            "_"*50,
-            "Features:",
-            "- Frequent itemset mining (Apriori, Apriori-Close, Apriori-Rare, Eclat)",
-            "- Association rule generation (confidence-based)",
-            "- CLI & GUI (draw or generate datasets visually)",
-            "- Laszlo.rcf default dataset + random dataset generator",
-            "- Clear, aligned output with support/confidence thresholds",
-            "_"*50,
-            "Educational use only | Licensed under CC BY-NC 4.0",
-            "_"*50,
-            ""
-        ]
-        self.output.insert(tkinter.END, "\n".join(lines))
-        self.output.see(tkinter.END)

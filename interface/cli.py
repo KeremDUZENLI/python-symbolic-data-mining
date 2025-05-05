@@ -1,3 +1,6 @@
+from helper import welcome_message
+
+
 class CLI():
     def __init__(self, create_dataset, create_dataset_default, ALGORITHMS, run_algorithm, output_dataset, output_summary):
         self.create_dataset         = create_dataset
@@ -10,7 +13,8 @@ class CLI():
         self.algorithm_names = [f"{key}) {function.__name__}" for key, function in sorted(self.algorithms.items())]
         self.dataset = None
 
-        self._welcome_message()
+        lines = welcome_message()
+        print(*lines, sep='\n')
         while True:
             prompt = input("\n[r] Generate Dataset  |  [d] Laszlo.rcf  |  [Enter] Run Algorithm  |  [q] Quit  :  ").strip().lower()
                    
@@ -78,25 +82,3 @@ class CLI():
                 print("!!! NOT VALID RANGE !!!")
             else:
                 return value
-
-
-    def _welcome_message(self):
-        print("_"*50 + "\n")
-        print("SYMBOLIC DATA MINING")
-        print("Instructor: Dr. László Szathmáry")
-        print("Developer : Kerem Düzenli | PhD Candidate, University of Debrecen")
-        
-        print("_"*50 + "\n")
-        print("Features:")
-        print("- Frequent itemset mining (Apriori, Apriori-Close, Apriori-Rare, Eclat)")
-        print("- Association rule generation (confidence-based)")
-        print("- CLI & GUI (draw or generate datasets visually)")
-        print("- Laszlo.rcf default dataset + random dataset generator")
-        print("- Clear, aligned output with support/confidence thresholds")
-        
-        print("_"*50 + "\n")
-        print("Educational use only | Licensed under CC BY-NC 4.0")
-        print("Project Repository : https://github.com/KeremDUZENLI/python-symbolic-data-mining")
-        print("Support My Projects: https://revolut.me/krmdznl")
-
-        print("_"*50 + "\n")

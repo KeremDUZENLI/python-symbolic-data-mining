@@ -1,8 +1,9 @@
 import random
+from helper import create_column_labels
 
 
 def create_dataset(rows, columns, density):
-    labels = [_create_column_labels(i) for i in range(columns)]
+    labels = [create_column_labels(item) for item in range(columns)]
 
     total_cells = rows * columns
     occurencies = int(total_cells * (density / 100))
@@ -28,13 +29,16 @@ def create_dataset_default():
         ['a','b','c','e'],
     ]
     dataset = [[item.upper() for item in txn] for txn in dataset]
-    labels = [_create_column_labels(i) for i in range(len(dataset[0])+1)]
+    
+    unique_items = sorted(set(item for txn in dataset for item in txn))
+    num_columns = len(unique_items)
+    labels = [create_column_labels(item) for item in range(num_columns)]
 
     return dataset, labels
 
 
 def create_dataset_from_grid(grid):
-    labels = [_create_column_labels(i) for i in range(len(grid[0]))]
+    labels = [create_column_labels(item) for item in range(len(grid[0]))]
 
     dataset = []
     for row in grid:
@@ -42,13 +46,3 @@ def create_dataset_from_grid(grid):
         dataset.append(txn)
 
     return dataset, labels
-
-
-def _create_column_labels(i):
-    label = ""
-    while True:
-        label = chr(ord('a') + (i % 26)) + label
-        i = i // 26 - 1
-        if i < 0:
-            break
-    return label.upper()
