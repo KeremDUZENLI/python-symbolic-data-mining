@@ -61,7 +61,7 @@ class GUI(tkinter.Tk):
         self.entry_minimum_confidence = tkinter.Entry(frame, textvariable=self.minimum_confidence, validate='key')
         
         button_generate_dataset       = tkinter.Button(frame, text="Generate Dataset", command=self._generate_dataset)
-        button_dataset_default        = tkinter.Button(frame, text="Laszlo.rcf",       command=self._dataset_default)
+        button_dataset_default        = tkinter.Button(frame, text="Default Dataset",  command=self._dataset_default)
         button_draw_dataset           = tkinter.Button(frame, text="Draw Dataset",     command=self._draw_dataset)
         button_clear_output           = tkinter.Button(frame, text="Clear Output",     command=self._clear_output)
         button_show_notes             = tkinter.Button(frame, text="Show Notes",       command=lambda: open_pdf("notes/Notes_Kerem.pdf"))
@@ -106,6 +106,7 @@ class GUI(tkinter.Tk):
         self.output.insert(tkinter.END, "\n".join(lines) + "\n")
         self.output.see(tkinter.END)
 
+        self.entry_minimum_confidence .config(state="disabled")
         self.algorithm_choice         .trace_add("write", lambda *args: self.entry_minimum_confidence.config(state="normal" if self.algorithm_choice.get() == "association_rule" else "disabled"))
         self.output                   .config(xscrollcommand=x_scroll.set)
 
@@ -125,9 +126,17 @@ class GUI(tkinter.Tk):
         self.dataset, self.labels = self.create_dataset_default()
         self._show_dataset()
         
-        self.rows.set(len(self.dataset)  if self.dataset else 0)
-        self.columns.set(len(self.labels) if self.labels else 0)
-        self.label_minimum_support.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {self.rows.get()})")
+        number_rows    = len(self.dataset)
+        number_columns = len(self.labels)
+        
+        filled_cells   = sum(len(txn) for txn in self.dataset)       
+        new_density    = int((filled_cells / (number_rows * number_columns)) * 100) if (number_rows * number_columns) else 0
+        
+        self.rows      .set(number_rows)
+        self.columns   .set(number_columns)
+        self.density   .set(new_density)
+        
+        self.label_minimum_support.config(text=f"Minimum Support ({self.rules['minimum_support'][0]} - {number_rows})")
 
 
     def _draw_dataset(self):
